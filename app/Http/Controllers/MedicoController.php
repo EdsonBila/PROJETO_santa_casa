@@ -2,7 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EspecialidadeRequest;
+use App\Models\Especialidade;
+use App\Models\Medico;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
+use DataTables;
 
 class MedicoController extends Controller
 {
@@ -60,5 +67,25 @@ class MedicoController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function list()
+    {
+        try {
+            $dados = Medico::select('id', 'nome')->get();
+            return response()->json($dados);
+        } catch (QueryException $e) {
+            Log::error('Erro ao listar médicos (Erro no banco de dados): ' . $e->getMessage(), [
+                'action' => 'lista - Médicos',
+                'exception' => $e
+            ]);
+            return response()->json([], 500);
+        } catch (\Exception $e) {
+            Log::error('Erro ao listar médicos (Ocorreu um erro): ' . $e->getMessage(), [
+                'action' => 'lista - Médicos',
+                'exception' => $e
+            ]);
+            return response()->json([], 500);
+        }
     }
 }

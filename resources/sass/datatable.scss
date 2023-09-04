@@ -1,0 +1,37 @@
+.dt-buttons {
+    float: none !important;
+    margin-bottom: 30px;
+}
+
+.buttons-search-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.container-buttons-datatable {
+    display: flex;
+    justify-content: center;
+}
+
+#button-edit-register,
+#button-delete-register, #button-delete-doctor{
+    background-color: #1c388b;
+    color: #FFFFFF;
+}
+
+#button-edit-register:hover,
+#button-delete-register:hover, #button-delete-doctor:hover {
+    background-color: #118fb8;
+    color: #FFFFFF;
+}
+
+.show-list-doctors {
+    width: 40px;
+}
+
+.ui-widget-header {
+    border: none; 
+    background: #FFFFFF;
+}

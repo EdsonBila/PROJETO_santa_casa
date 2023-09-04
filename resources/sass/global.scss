@@ -1,0 +1,29 @@
+.active-button-menu,
+.active-button-menu a {
+    color: #78bfe2;
+    border-bottom-color: #78bfe2;
+    filter: invert(75%) sepia(42%) saturate(678%) hue-rotate(170deg) brightness(95%) contrast(87%);
+}
+
+
+// toast
+.button-custom-toast {
+    border: none;
+    margin-right: 10px;
+    height: 30px;
+    font-weight: bold;
+    border-radius: 5px;
+    width: 60px;
+    background-color: #FFFFFF;
+    color: #70767d;
+}
+
+.button-custom-toast:hover {
+    background-color: #70767d;
+    color: #ffffff;
+}
+
+.mensage-toast {
+    font-weight: bold;
+    font-size: 17px;
+}

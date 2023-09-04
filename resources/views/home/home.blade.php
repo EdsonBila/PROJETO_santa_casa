@@ -30,3 +30,7 @@
     </div>
 </div>
 @endsection
+
+@section('scripts')
+<script src="{{ asset('assets/js/home/index.js') }}"></script>
+@endsection
