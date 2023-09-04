@@ -1,3 +1,7 @@
+.logo-menu {
+    height: 80px;
+}
+
 .navbar-text {
     color: #1c388b;
     font-weight: bold;
@@ -7,26 +11,36 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: flex-end;
 }
 
 .btn-navbar {
-    background-color: #1c388b;
-    border-radius: 50px;
-    width: 182px;
-    height: 26px;
-    display: flex;
-    justify-content: center;
-    flex-direction: row;
-    align-items: center;
+    border-radius: 4px;
+    height: 39px;
     margin-right: 20px;
+    border-bottom: 4px solid #1c388b;
 }
 
 .btn-navbar a {
-    color: #FFFFFF;
+    color: #1c388b;
     font-weight: bold;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
 }
 
+.icon-menu {
+    filter: invert(11%) sepia(96%) saturate(2905%) hue-rotate(222deg) brightness(99%) contrast(84%);
+    margin-right: 10px;
+    height: 23px;
+}
+
+.btn-navbar:hover,
+.btn-navbar a:hover {
+    color: #78bfe2;
+    border-bottom-color: #78bfe2;
+    filter: invert(75%) sepia(42%) saturate(678%) hue-rotate(170deg) brightness(95%) contrast(87%);
+}
 
 @media (max-width: 700px) {
     .btn-navbar {
@@ -35,6 +49,12 @@
 
     .navbar-menu ul {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: flex-end;
+    }
+}
+
+@media (max-width: 991px) {
+    .navbar-menu {
+        margin: 20px 0 12px 0;
     }
 }
