@@ -1,7 +1,8 @@
 $(document).ready(function () {
+    var dataTableEspecialidade, dataTableMedico;
     $('.especialidade-nav-item').addClass('active-button-menu');
     // datatable primaria - lista de especialidade
-    dataTable = $('#table-datatable-especialidade').DataTable({
+    var dataTableEspecialidade = $('#table-datatable-especialidade').DataTable({
         aaSorting: [[0, 'desc']],
         dom: 'B<"buttons-search-row"lf>rt<"bottom"ip><"clear">',
         buttons: [
@@ -29,6 +30,7 @@ $(document).ready(function () {
                     columns: [1, 2]
                 }
             }],
+        fixedHeader: true,
         responsive: {
             breakpoints: [
                 { name: 'bigdesktop', width: Infinity },
@@ -42,11 +44,12 @@ $(document).ready(function () {
                 { name: 'mobilep', width: 320 }
             ], details: {
                 renderer: function (api, rowIdx, columns) {
+                    checkDaughterResponsiveActive();
                     var data = $.map(columns, function (col, i) {
                         return col.hidden ?
                             '<tr data-dt-row="' + col.rowIndex + '" data-dt-column="' + col.columnIndex + '">' +
-                            '<td><b>' + col.title + '</b> :' + '</td> ' +
-                            '<td>' + col.data + '</td>' +
+                            '<td><b>' + col.title + '</b>:' + '</td> ' +
+                            '<td style="word-break: break-all;">' + col.data + '</td>' +
                             '</tr>' :
                             '';
                     }).join('');
@@ -73,8 +76,7 @@ $(document).ready(function () {
             { data: 'id', name: 'id' },
             { data: 'nome', name: 'nome' },
             { data: 'descricao', name: 'descricao' },
-            { data: 'acao', name: 'acao', orderable: false, searchable: false },
-            { data: null, orderable: false, searchable: false, className: 'show-list-doctors', "defaultContent": '' }
+            { data: 'acao', name: 'acao', orderable: false, searchable: false, className: 'show-list-doctors' },
         ]
     });
 
@@ -193,61 +195,108 @@ $(document).ready(function () {
     })
 
     // datatable secundaria - lista de medicos selecionados
-    $('#table-datatable-especialidade tbody').on('click', 'td.show-list-doctors', function listDoctors() {
-        var tr = $(this).closest('tr');
-        var row = dataTable.row(tr);
-        var isRowExpanded = tr.hasClass('shown');
-        if ($('.row-shown-list-doctors').length) {
-            $('.row-shown-list-doctors').each(function () {
-                var oldRow = dataTable.row($(this));
-                if (row !== oldRow) {
-                    oldRow.child.hide();
-                    $(this).removeClass('shown row-shown-list-doctors');
-                }
-            });
+    $('#table-datatable-especialidade tbody').on('click', 'td.show-list-doctors div button#button-open-vinculo', function listDoctors() {
+        if ($('.show-modal-detalhes').length) {
+            $('.show-modal-detalhes').remove();
         }
-        if (isRowExpanded) {
-            row.child.hide();
-            tr.removeClass('shown row-shown-list-doctors');
-        } else {
-            var data = row.data();
-            row.child(listDoctorsChildRow(data.id)).show();
-            tr.addClass('shown row-shown-list-doctors');
-            $('#table-datatable-medico').DataTable({
-                aaSorting: [[0, 'desc']],
-                responsive: true,
-                lengthMenu: [5, 10, 25, 50, 100],
-                pageLength: 5,
-                language: {
-                    url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/pt-BR.json',
-                    search: '',
-                    lengthMenu: '_MENU_'
+        var row = dataTableEspecialidade.row($(this).closest('tr'));
+        var data = row.data();
+        var showModalDetalhes = $('<div>').addClass('show-modal-detalhes');
+        var modelHtml = listDoctorsModal(data.id);
+        $('body').append(showModalDetalhes.html(modelHtml));
+        dataTableMedico = $('#table-datatable-medico').DataTable({
+            dom: 'B<"buttons-search-row"lf>rt<"bottom"ip><"clear">',
+            buttons: [
+                {
+                    extend: 'excel',
+                    autoFilter: true,
+                    sheetName: `ESPECIALIDADES-${data.id}-MEDICO`,
+                    titleAttr: `ESPECIALIDADES-${data.id}-MEDICO`,
+                    action: newexportaction,
+                    title: `ESPECIALIDADES-${data.id}-MEDICO`,
+                    filename: `ESPECIALIDADES-${data.id}-MEDICO`,
+                    exportOptions: {
+                        columns: [1, 2]
+                    }
                 },
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: `/especialidade/${data.id}/listaMedicosSelecionados`,
-                    type: "GET"
+                {
+                    title: `ESPECIALIDADES-${data.id}-MEDICO`,
+                    download: 'open',
+                    sheetName: `ESPECIALIDADES-${data.id}-MEDICO`,
+                    extend: 'pdf',
+                    titleAttr: 'PDF',
+                    filename: `ESPECIALIDADES-${data.id}-MEDICO`,
+                    action: newexportaction,
+                    exportOptions: {
+                        columns: [1, 2]
+                    }
+                }],
+            aaSorting: [[0, 'desc']],
+            responsive: {
+                breakpoints: [
+                    { name: 'bigdesktop', width: Infinity },
+                    { name: 'meddesktop', width: 1480 },
+                    { name: 'smalldesktop', width: 1280 },
+                    { name: 'medium', width: 1188 },
+                    { name: 'tabletl', width: 1024 },
+                    { name: 'btwtabllandp', width: 848 },
+                    { name: 'tabletp', width: 768 },
+                    { name: 'mobilel', width: 480 },
+                    { name: 'mobilep', width: 320 }
+                ], details: {
+                    renderer: function (api, rowIdx, columns) {
+                        var data = $.map(columns, function (col, i) {
+                            return col.hidden ?
+                                '<tr data-dt-row="' + col.rowIndex + '" data-dt-column="' + col.columnIndex + '">' +
+                                '<td><b>' + col.title + '</b>:' + '</td> ' +
+                                '<td style="word-break: break-all;">' + col.data + '</td>' +
+                                '</tr>' :
+                                '';
+                        }).join('');
+                        return data ?
+                            $('<table/>').append(data) :
+                            false;
+                    }
                 },
-                columns: [
-                    { data: 'id', name: 'id' },
-                    { data: 'nome', name: 'nome' },
-                    { data: 'CRM', name: 'CRM' },
-                    { data: 'telefone', name: 'telefone' },
-                    { data: 'email', name: 'email' },
-                    { data: 'acao', name: 'acao', orderable: false, searchable: false },
-                ],
-            });
-            listDoctorsSelectAdd(data.id);
-        }
+            },
+            lengthMenu: [5, 10, 25, 50, 100],
+            pageLength: 5,
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/pt-BR.json',
+                search: '',
+                lengthMenu: '_MENU_'
+            },
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: `/especialidade/${data.id}/listaMedicosSelecionados`,
+                type: "GET"
+            },
+            columns: [
+                { data: 'id', name: 'id' },
+                { data: 'nome', name: 'nome' },
+                { data: 'CRM', name: 'CRM' },
+                { data: 'telefone', name: 'telefone' },
+                { data: 'email', name: 'email' },
+                { data: 'acao', name: 'acao', orderable: false, searchable: false },
+            ],
+        });
+         $('#ModalDetalhes').modal('show');
+        listDoctorsSelectAdd(data.id);
     });
 
-    function listDoctorsChildRow(especialidadeId) {
-        return `<div style="padding: 4px;margin: 2px;">
+    function listDoctorsModal(especialidadeId) {
+        return `<div class="modal fade" id="ModalDetalhes" tabindex="-1" aria-labelledby="ModalDetalhes" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
+                <div class="modal-content">
+                    <div class="modal-header">
+                         <h1 class="list-doctor-title">Médicos</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
                     <div class="container-update-doctor">
                         <div class="container-list-doctor-header">
-                            <h1 class="list-doctor-title">Médicos</h1>
-                            <span class="icon-add-doctor" id="button-action-add-doctor"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg></span>
+                            <span class="icon-add-doctor button-custom" id="button-action-add-doctor"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg></span>
                         </div>
                         <div id="container-choice-doctor-database" style="display: none">
                             <select id="select-add-choice-doctor" multiple style="display: none"></select>
@@ -257,21 +306,25 @@ $(document).ready(function () {
                             </div>
                         </div>
                     </div>
-                    <table class="highlight centered" id="table-datatable-medico" style="width:100%;">
+                    <table class="highlight" id="table-datatable-medico" style="width:100%;">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th data-priority="1">ID</th>
                                 <th>NOME</th>
                                 <th>CRM</th>
                                 <th>TELEFONE</th>
                                 <th>E-MAIL</th>
-                                <th>AÇÃO<th>
+                                <th  data-priority="2">AÇÃO</th>
                             </tr>
                         </thead>
                         <tbody>
                         </tbody>
-                    </table>
-                </div>`;
+                   </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+                `;
     }
 
     $(document).on('click', '#button-delete-doctor', function deleteEspecialidadeDoctor() {
@@ -339,7 +392,6 @@ $(document).ready(function () {
 
     $(document).on('click', '#button-save-add-doctor', function registerDoctor() {
         var especialidadeId = $(this).data('id_especialidade');
-        console.log(especialidadeId)
         var validation = true;
         var selectedOptions = $('#select-add-choice-doctor option:selected').map(function () {
             return $(this).val();

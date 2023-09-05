@@ -16,10 +16,33 @@ class MedicoController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Medico::select('id', 'nome', 'CRM', 'telefone', 'email', 'dt_cadastro')->get();
-            return DataTables::of($data)->addColumn('acao', function ($data) {
-                return "<div class='container-buttons-datatable'><button type='button' data-id='{$data->id}' class='button-custom button-action' id='button-edit-register'>EDITAR</button><button type='button' data-id='{$data->id}' class='button-custom button-action' id='button-delete-register'>EXCLUIR</button></div>";
-            })->rawColumns(['acao'])->make(true);
+            try {
+                $data = Medico::select('id', 'nome', 'CRM', 'telefone', 'email', 'dt_cadastro')->get();
+                return DataTables::of($data)->addColumn('acao', function ($data) {
+                    return "<div class='container-buttons-datatable'><button type='button' data-id='{$data->id}' class='button-custom button-action' id='button-edit-register'>EDITAR</button><button type='button' data-id='{$data->id}' class='button-custom button-action' id='button-delete-register'>EXCLUIR</button><button type='button' class='button-custom button-action' id='button-open-vinculo'>VÍNCULOS</button></div>";
+                })->rawColumns(['acao'])->make(true);
+            } catch (ModelNotFoundException $e) {
+                Log::error('Erro ao obter medicos (Registro não encontrado): ' . $e->getMessage(), [
+                    'action' => 'index - MedicoController',
+                    'request_data' => $request,
+                    'exception' => $e
+                ]);
+                return response()->json([], 404);
+            } catch (QueryException $e) {
+                Log::error('Erro ao obter medicos (Erro no banco de dados): ' . $e->getMessage(), [
+                    'action' => 'index - MedicoController',
+                    'request_data' => $request,
+                    'exception' => $e
+                ]);
+                return response()->json([], 500);
+            } catch (\Exception $e) {
+                Log::error('Erro ao obter medicos (Ocorreu um erro): ' . $e->getMessage(), [
+                    'action' => 'index - MedicoController',
+                    'request_data' => $request,
+                    'exception' => $e
+                ]);
+                return response()->json([], 500);
+            }
         }
 
         return view('medicos.medicos');
@@ -32,8 +55,8 @@ class MedicoController extends Controller
             $medico = Medico::create([
                 'nome' => $data['nome'],
                 'CRM' => $data['CRM'],
-                'telefone'=>$data['telefone'],
-                'email'=>$data['email'],
+                'telefone' => $data['telefone'],
+                'email' => $data['email'],
             ]);
             $especialidadesIds = $data['especialidades'];
             $medico->especialidades()->attach($especialidadesIds);
@@ -159,14 +182,47 @@ class MedicoController extends Controller
         }
     }
 
+    public function listSpecialtySelectedDatatable(Request $request, string $medicoId)
+    {
+        if ($request->ajax()) {
+            try {
+                $medico = Medico::findOrFail($medicoId);
+                $especialidades = $medico->especialidades()->select('id', 'nome', 'descricao')->get();
+                return DataTables::of($especialidades)->addColumn('acao', function ($especialidades) use ($medicoId) {
+                    return "<div class='container-buttons-datatable'><button type='button' data-id_medico='{$medicoId}' data-id_especialidade='{$especialidades->id}' class='button-custom button-action' id='button-delete-specialty'>DESVINCULAR</button></div>";
+                })->rawColumns(['acao'])->make(true);
+            } catch (ModelNotFoundException $e) {
+                Log::error('Erro ao obter especialidade por medico (Registro não encontrado): ' . $e->getMessage(), [
+                    'action' => 'listSpecialtySelected - MedicoController',
+                    'request_data' => "id: $medicoId",
+                    'exception' => $e
+                ]);
+                return response()->json([], 404);
+            } catch (QueryException $e) {
+                Log::error('Erro ao obter especialidade por medico (Erro no banco de dados): ' . $e->getMessage(), [
+                    'action' => 'listSpecialtySelected - MedicoController',
+                    'request_data' => "id: $medicoId",
+                    'exception' => $e
+                ]);
+                return response()->json([], 500);
+            } catch (\Exception $e) {
+                Log::error('Erro ao obter especialidade por medico (Ocorreu um erro): ' . $e->getMessage(), [
+                    'action' => 'listSpecialtySelected - MedicoController',
+                    'request_data' => "id: $medicoId",
+                    'exception' => $e
+                ]);
+                return response()->json([], 500);
+            }
+        }
+        return response()->json([], 404);
+    }
+
     public function listSpecialtySelected(string $medicoId)
     {
         try {
             $medico = Medico::findOrFail($medicoId);
-            $especialidade = $medico->especialidades()->select('id', 'nome', 'descricao')->get();
-            return DataTables::of($especialidade)->addColumn('acao', function ($especialidade) use ($medicoId) {
-                return "<div class='container-buttons-datatable'><button type='button' data-id_medico='{$medicoId}' data-id_especialidade='{$especialidade->id}' class='button-custom button-action' id='button-delete-specialty'>DESVINCULAR</button></div>";
-            })->rawColumns(['acao'])->make(true);
+            $especialidades = $medico->especialidades()->select('id', 'nome', 'descricao')->get();
+            return response()->json($especialidades);
         } catch (ModelNotFoundException $e) {
             Log::error('Erro ao obter especialidade por medico (Registro não encontrado): ' . $e->getMessage(), [
                 'action' => 'listSpecialtySelected - MedicoController',
@@ -280,7 +336,7 @@ class MedicoController extends Controller
     public function list()
     {
         try {
-            $dados = Medico::select('id', 'nome')->get();
+            $dados = Medico::select('id', 'nome', 'CRM', 'telefone', 'email')->get();
             return response()->json($dados);
         } catch (QueryException $e) {
             Log::error('Erro ao listar médicos (Erro no banco de dados): ' . $e->getMessage(), [

@@ -1,14 +1,6 @@
 @extends('includes.main')
-@section('styles')
-
-td.show-list-specialty {
-background: url("{{ asset('assets/icons/expandir.svg') }}") no-repeat center;
-cursor: pointer;
-}
-
-tr.shown td.show-list-specialty {
-background: url("{{ asset('assets/icons/fechar_expandir.svg') }}") no-repeat center;
-}
+@section('linkcss')
+<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/medico/index.css') }}">
 @endsection
 
 @section('content')
@@ -21,19 +13,19 @@ background: url("{{ asset('assets/icons/fechar_expandir.svg') }}") no-repeat cen
     <div class="container-register" style="display: none;">
         <div class="container-input">
             <label for="form-register-name" class="label-input">Nome do Médico (Obrigatório)</label>
-            <input type="text" class="validate-form-create input-form" id="form-register-name" placeholder="Informe o Nome do Médico">
+            <input type="text" class="validate-form-create input-form" id="form-register-name" placeholder="Informe o Nome do Médico" maxlength="45">
         </div>
         <div class="container-input">
             <label for="form-register-CRM" class="label-input">CRM do Médico (Obrigatório)</label>
-            <input type="text" class="validate-form-create input-form" id="form-register-CRM" placeholder="Informe o CRM do Médico">
+            <input type="text" class="validate-form-create input-form" id="form-register-CRM" placeholder="Informe o CRM do Médico" maxlength="45">
         </div>
         <div class="container-input">
             <label for="form-register-telefone" class="label-input">Telefone do Médico (Obrigatório)</label>
-            <input type="text" class="validate-form-create input-form" id="form-register-telefone" placeholder="Informe o Telefone do Médico">
+            <input type="text" class="validate-form-create input-form" id="form-register-telefone" placeholder="Informe o Telefone do Médico" maxlength="45">
         </div>
         <div class="container-input">
             <label for="form-register-email" class="label-input">E-mail do Médico (Obrigatório)</label>
-            <input type="text" class="validate-form-create input-form" id="form-register-email" placeholder="Informe o E-mail do Médico">
+            <input type="text" class="validate-form-create input-form" id="form-register-email" placeholder="Informe o E-mail do Médico" maxlength="45">
         </div>
         <div class="form-check container-check">
             <input type="checkbox" class="form-check-input" id="form-register-choice-specialty-check">
@@ -50,14 +42,13 @@ background: url("{{ asset('assets/icons/fechar_expandir.svg') }}") no-repeat cen
     <table id="table-datatable-medico" class="table cell-border stripe" style="width:100%">
         <thead>
             <tr>
-                <th>ID</th>
+                <th data-priority="1">CÓDIGO</th>
                 <th>NOME</th>
                 <th>CRM</th>
                 <th>TELEFONE</th>
                 <th>E-MAIL</th>
                 <th>CADASTRO</th>
-                <th>AÇÃO</th>
-                <th></th>
+                <th data-priority="2"></th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -73,19 +64,19 @@ background: url("{{ asset('assets/icons/fechar_expandir.svg') }}") no-repeat cen
                 <div class="modal-body">
                     <div class="container-input">
                         <label for="form-update-name" class="label-input">Nome do Médico (Obrigatório)</label>
-                        <input type="text" class="validate-form-update input-form" id="form-update-name" placeholder="Informe o nome do Médico">
+                        <input type="text" class="validate-form-update input-form" id="form-update-name" placeholder="Informe o nome do Médico" maxlength="45">
                     </div>
                     <div class="container-input">
                         <label for="form-update-CRM" class="label-input">CRM do Médico (Obrigatório)</label>
-                        <input type="text" class="validate-form-update input-form" id="form-update-CRM" placeholder="Informe o CRM do Médico">
+                        <input type="text" class="validate-form-update input-form" id="form-update-CRM" placeholder="Informe o CRM do Médico" maxlength="45">
                     </div>
                     <div class="container-input">
                         <label for="form-update-telefone" class="label-input">Telefone do Médico (Obrigatório)</label>
-                        <input type="text" class="validate-form-update input-form" id="form-update-telefone" placeholder="Informe o Telefone do Médico">
+                        <input type="text" class="validate-form-update input-form" id="form-update-telefone" placeholder="Informe o Telefone do Médico" maxlength="45">
                     </div>
                     <div class="container-input">
                         <label for="form-update-email" class="label-input">E-mail do Médico (Obrigatório)</label>
-                        <input type="text" class="validate-form-update input-form" id="form-update-email" placeholder="Informe o E-mail do Médico">
+                        <input type="text" class="validate-form-update input-form" id="form-update-email" placeholder="Informe o E-mail do Médico" maxlength="45">
                     </div>
                 </div>
                 <div class="modal-footer">

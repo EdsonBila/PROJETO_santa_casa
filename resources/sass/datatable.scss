@@ -27,11 +27,26 @@
     color: #FFFFFF;
 }
 
-.show-list-doctors, .show-list-specialty {
+.show-list-doctors, .show-list-specialty{
     width: 40px;
 }
 
 .ui-widget-header {
     border: none; 
     background: #FFFFFF;
+}
+
+div.dt-buttons .dt-button {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background-color: #1c388b;
+    color: white;
+    border: none;
+    font-weight: bold;
+    height: 40px;
+    width: 90px;
+}
+
+div.dt-buttons .dt-button:hover {
+    background-color: #4cabca;
 }

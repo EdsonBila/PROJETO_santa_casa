@@ -80,7 +80,7 @@ table.dataTable td.dt-control {
     cursor: pointer
 }
 
-table.dataTable td.dt-control:before {
+/* table.dataTable td.dt-control:before {
     display: inline-block;
     color: rgba(0, 0, 0, 0.5);
     content: "►"
@@ -88,7 +88,7 @@ table.dataTable td.dt-control:before {
 
 table.dataTable tr.dt-hasChild td.dt-control:before {
     content: "▼"
-}
+} */
 
 html.dark table.dataTable td.dt-control:before {
     color: rgba(255, 255, 255, 0.5)

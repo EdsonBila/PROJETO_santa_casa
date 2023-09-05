@@ -1,5 +1,5 @@
 .container-register,
-#container-choice-doctor-database {
+#container-choice-specialty-datatable {
     box-shadow: 2px 3px 10px -3px rgba(0, 0, 0, 0.1), -2px -2px 10px -3px rgba(0, 0, 0, 0.1);
     padding: 30px;
     border-radius: 15px;
@@ -68,14 +68,14 @@
 
 #button-cancel-create,
 #modal-button-edit-cancel,
-#button-cancel-add-doctor {
+#button-cancel-add-specialty {
     background-color: #ebf6f9;
     color: #acadad;
 }
 
 #button-cancel-create:hover,
 #modal-button-edit-cancel:hover,
-#button-cancel-add-doctor:hover {
+#button-cancel-add-specialty:hover {
     background-color: #acadad;
     color: #ffffff;
 }
@@ -83,7 +83,7 @@
 #button-save-create,
 #button-create,
 #modal-button-edit-save,
-#button-save-add-doctor {
+#button-save-add-specialty, #button-open-vinculo {
     background-color: #1c388b;
     color: #FFFFFF;
 }
@@ -91,34 +91,31 @@
 #button-save-create:hover,
 #button-create:hover,
 #modal-button-edit-save:hover,
-#button-save-add-doctor:hover {
+#button-save-add-specialty:hover, #button-open-vinculo:hover {
     background-color: #118fb8;
     color: #FFFFFF;
 }
 
-
-
-// list-doctor-datatable
-.container-update-doctor {
+.container-update-specialty {
     border-bottom: solid 1px #eae4e4;
     margin: 10px;
 }
 
-.container-list-doctor-header {
+.container-list-specialty-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     margin: 4px;
 }
 
-.list-doctor-title {
+.list-specialty-title {
     color: #a3a3a3;
     font-weight: bold;
-    font-size: 29px;
+    font-size: 30px;
+    margin: 0;
 }
 
-.icon-add-doctor {
-    border-radius: 50px;
+.icon-add-specialty {
     background-color: #1c388b;
     height: 35px;
     width: 35px;
@@ -128,10 +125,10 @@
     cursor: pointer;
 }
 
-.icon-add-doctor:hover {
+.icon-add-specialty:hover {
     background-color: #118fb8;
 }
 
-.icon-add-doctor svg {
+.icon-add-specialty svg {
     filter: invert(100%) sepia(0%) saturate(2%) hue-rotate(231deg) brightness(107%) contrast(101%);
 }

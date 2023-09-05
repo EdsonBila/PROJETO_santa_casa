@@ -11,7 +11,7 @@
                             <span class="title">ESPECIALIDADES</span>
                             <img class="icon" src="{{ asset('assets/icons/especialidade.svg') }}" alt="icone Especialidade">
                         </div>
-                        <p class="card-text qtd">05</p>
+                        <p class="card-text qtd">{{ $quantidadeEspecialidades }}</p>
                     </div>
                 </div>
             </div>
@@ -22,7 +22,7 @@
                             <span class="title">Médicos</span>
                             <img class="icon" src="{{ asset('assets/icons/medico.svg') }}" alt="icone Medico">
                         </div>
-                        <p class="card-text qtd">04</p>
+                        <p class="card-text qtd">{{ $quantidadeMedicos }}</p>
                     </div>
                 </div>
             </div>

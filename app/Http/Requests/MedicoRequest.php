@@ -40,4 +40,20 @@ class MedicoRequest extends FormRequest
             'especialidades' => 'array',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'nome.required' => 'O campo nome é obrigatório.',
+            'nome.string' => 'O campo nome deve ser um texto e ter no máximo 45 caracteres.',
+            'CRM.required' => 'O campo CRM é obrigatório.',
+            'CRM.unique' => 'O campo CRM já está em uso.',
+            'CRM.string' => 'O campo CRM deve ser um texto e ter no máximo 45 caracteres.',
+            'telefone.required' => 'O campo telefone é obrigatório.',
+            'telefone.string' => 'O campo telefone deve ser um texto e ter no máximo 45 caracteres.',
+            'email.required' => 'O campo email é obrigatório.',
+            'email.email' => 'O campo email deve ser um endereço de email válido.',
+            'email.unique' => 'O campo email já está em uso.',
+        ];
+    }
 }

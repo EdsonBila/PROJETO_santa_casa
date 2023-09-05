@@ -1,7 +1,9 @@
 $(document).ready(function () {
+    var dataTableEspecialidade, dataTableMedico;
+    $('#form-register-telefone, #form-update-telefone').mask("(99) 99999-9999");
     $('.medico-nav-item').addClass('active-button-menu');
     // datatable primaria - lista de medicos
-    dataTable = $('#table-datatable-medico').DataTable({
+    dataTableMedico = $('#table-datatable-medico').DataTable({
         aaSorting: [[0, 'desc']],
         dom: 'B<"buttons-search-row"lf>rt<"bottom"ip><"clear">',
         buttons: [
@@ -26,9 +28,10 @@ $(document).ready(function () {
                 filename: 'MEDICOS',
                 action: newexportaction,
                 exportOptions: {
-                    columns: [1, 2, 3, 4 ,5]
+                    columns: [1, 2, 3, 4, 5]
                 }
             }],
+        fixedHeader: true,
         responsive: {
             breakpoints: [
                 { name: 'bigdesktop', width: Infinity },
@@ -42,11 +45,12 @@ $(document).ready(function () {
                 { name: 'mobilep', width: 320 }
             ], details: {
                 renderer: function (api, rowIdx, columns) {
+                    checkDaughterResponsiveActive();
                     var data = $.map(columns, function (col, i) {
                         return col.hidden ?
                             '<tr data-dt-row="' + col.rowIndex + '" data-dt-column="' + col.columnIndex + '">' +
-                            '<td><b>' + col.title + '</b> :' + '</td> ' +
-                            '<td>' + col.data + '</td>' +
+                            '<td><b>' + col.title + '</b>:' + '</td> ' +
+                            '<td style="word-break: break-all;">' + col.data + '</td>' +
                             '</tr>' :
                             '';
                     }).join('');
@@ -76,8 +80,7 @@ $(document).ready(function () {
             { data: 'telefone', name: 'telefone' },
             { data: 'email', name: 'email' },
             { data: 'dt_cadastro', name: 'dt_cadastro' },
-            { data: 'acao', name: 'acao', orderable: false, searchable: false },
-            { data: null, orderable: false, searchable: false, className: 'show-list-specialty', "defaultContent": '' }
+            { data: 'acao', name: 'acao', orderable: false, searchable: false, className: 'show-list-specialty' },
         ]
     });
 
@@ -105,7 +108,7 @@ $(document).ready(function () {
                     delay: 5000
                 })
                 setTimeout(function () {
-                    // location.reload();
+                    location.reload();
                 }, 5000);
             }
         });
@@ -139,6 +142,17 @@ $(document).ready(function () {
                     reloadDataTable('#table-datatable-medico');
                 },
                 error: function (data) {
+                    if (data.status == 422) {
+                        $.each(data.responseJSON.errors, function (key, value) {
+                            bootstrap.showToast({
+                                body: value[0],
+                                toastClass: "text-warning-emphasis bg-warning-subtle",
+                                closeButtonClass: "btn-close",
+                                delay: 5000
+                            })
+                        });
+                        return;
+                    }
                     bootstrap.showToast({
                         body: "Ocorreu um erro inesperado, tente novamente mais tarde",
                         toastClass: "text-danger-emphasis bg-danger-subtle",
@@ -146,7 +160,7 @@ $(document).ready(function () {
                         delay: 5000
                     })
                     setTimeout(function () {
-                        // location.reload();
+                        location.reload();
                     }, 5000);
                 }
             });
@@ -191,7 +205,7 @@ $(document).ready(function () {
                         delay: 5000
                     })
                     setTimeout(function () {
-                        // location.reload();
+                        location.reload();
                     }, 5000);
                 }
             });
@@ -199,59 +213,107 @@ $(document).ready(function () {
     })
 
     // datatable secundaria - lista de especialidades selecionados
-    $('#table-datatable-medico tbody').on('click', 'td.show-list-specialty', function listSpecialty() {
-        var tr = $(this).closest('tr');
-        var row = dataTable.row(tr);
-        var isRowExpanded = tr.hasClass('shown');
-        if ($('.row-shown-list-doctors').length) {
-            $('.row-shown-list-doctors').each(function () {
-                var oldRow = dataTable.row($(this));
-                if (row !== oldRow) {
-                    oldRow.child.hide();
-                    $(this).removeClass('shown row-shown-list-doctors');
-                }
-            });
+    $('#table-datatable-medico tbody').on('click', 'td.show-list-specialty div button#button-open-vinculo', function listSpecialty() {
+        if ($('.show-modal-detalhes').length) {
+            $('.show-modal-detalhes').remove();
         }
-        if (isRowExpanded) {
-            row.child.hide();
-            tr.removeClass('shown row-shown-list-doctors');
-        } else {
-            var data = row.data();
-            row.child(listSpecialtyChildRow(data.id)).show();
-            tr.addClass('shown row-shown-list-doctors');
-            $('#table-datatable-especialidade').DataTable({
-                aaSorting: [[0, 'desc']],
-                responsive: true,
-                lengthMenu: [5, 10, 25, 50, 100],
-                pageLength: 5,
-                language: {
-                    url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/pt-BR.json',
-                    search: '',
-                    lengthMenu: '_MENU_'
+        var row = dataTableMedico.row($(this).closest('tr'));
+        var data = row.data();
+        var showModalDetalhes = $('<div>').addClass('show-modal-detalhes');
+        var modelHtml = listSpecialtyModal(data.id);
+        $('body').append(showModalDetalhes.html(modelHtml));
+        dataTableEspecialidade = $('#table-datatable-especialidade').DataTable({
+            dom: 'B<"buttons-search-row"lf>rt<"bottom"ip><"clear">',
+            buttons: [
+                {
+                    extend: 'excel',
+                    autoFilter: true,
+                    sheetName: `MEDICO-${data.id}-ESPECIALIDADES`,
+                    titleAttr: `MEDICO-${data.id}-ESPECIALIDADES`,
+                    action: newexportaction,
+                    title: `MEDICO-${data.id}-ESPECIALIDADES`,
+                    filename: `MEDICO-${data.id}-ESPECIALIDADES`,
+                    exportOptions: {
+                        columns: [1, 2]
+                    }
                 },
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: `/medico/${data.id}/listaEspecialidadesSelecionadas`,
-                    type: "GET"
+                {
+                    title: `MEDICO-${data.id}-ESPECIALIDADES`,
+                    download: 'open',
+                    sheetName: `MEDICO-${data.id}-ESPECIALIDADES`,
+                    extend: 'pdf',
+                    titleAttr: 'PDF',
+                    filename: `MEDICO-${data.id}-ESPECIALIDADES`,
+                    action: newexportaction,
+                    exportOptions: {
+                        columns: [1, 2]
+                    }
+                }],
+            aaSorting: [[0, 'desc']],
+            responsive: {
+                breakpoints: [
+                    { name: 'bigdesktop', width: Infinity },
+                    { name: 'meddesktop', width: 1480 },
+                    { name: 'smalldesktop', width: 1280 },
+                    { name: 'medium', width: 1188 },
+                    { name: 'tabletl', width: 1024 },
+                    { name: 'btwtabllandp', width: 848 },
+                    { name: 'tabletp', width: 768 },
+                    { name: 'mobilel', width: 480 },
+                    { name: 'mobilep', width: 320 }
+                ], details: {
+                    renderer: function (api, rowIdx, columns) {
+                        var data = $.map(columns, function (col, i) {
+                            return col.hidden ?
+                                '<tr data-dt-row="' + col.rowIndex + '" data-dt-column="' + col.columnIndex + '">' +
+                                '<td><b>' + col.title + '</b>:' + '</td> ' +
+                                '<td style="word-break: break-all;">' + col.data + '</td>' +
+                                '</tr>' :
+                                '';
+                        }).join('');
+                        return data ?
+                            $('<table/>').append(data) :
+                            false;
+                    }
                 },
-                columns: [
-                    { data: 'id', name: 'id' },
-                    { data: 'nome', name: 'nome' },
-                    { data: 'descricao', name: 'descricao' },
-                    { data: 'acao', name: 'acao', orderable: false, searchable: false },
-                ],
-            });
-            listSpecialtySelectAdd(data.id);
-        }
+            },
+            lengthMenu: [5, 10, 25, 50, 100],
+            pageLength: 5,
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/pt-BR.json',
+                search: '',
+                lengthMenu: '_MENU_'
+            },
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: `/medico/${data.id}/listaEspecialidadesSelecionadasDatatable`,
+                type: "GET"
+            },
+            columns: [
+                { data: 'id', name: 'id' },
+                { data: 'nome', name: 'nome' },
+                { data: 'descricao', name: 'descricao' },
+                { data: 'acao', name: 'acao', orderable: false, searchable: false },
+            ],
+        });
+        $('#ModalDetalhes').modal('show');
+        listSpecialtySelectAdd(data.id);
     });
 
-    function listSpecialtyChildRow(medicoId) {
-        return `<div style="padding: 4px;margin: 2px;">
-                    <div class="container-update-doctor">
-                        <div class="container-list-doctor-header">
-                            <h1 class="list-doctor-title">Especialidade</h1>
-                            <span class="icon-add-doctor" id="button-action-add-specialty"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg></span>
+    function listSpecialtyModal(medicoId) {
+        return `
+        <div class="modal fade" id="ModalDetalhes" tabindex="-1" aria-labelledby="ModalDetalhes" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="list-specialty-title">Especialidade</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-update-specialty">
+                        <div class="container-list-specialty-header">
+                            <span class="icon-add-specialty button-custom" id="button-action-add-specialty"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg></span>
                         </div>
                         <div id="container-choice-specialty-datatable" style="display: none">
                             <select id="select-add-choice-specialty" multiple style="display: none"></select>
@@ -261,10 +323,10 @@ $(document).ready(function () {
                             </div>
                         </div>
                     </div>
-                    <table class="highlight centered" id="table-datatable-especialidade" style="width:100%;">
+                    <table class="highlight" id="table-datatable-especialidade" style="width:100%;">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>CÓDIGO</th>
                                 <th>NOME</th>
                                 <th>DESCRIÇÃO</th>
                                 <th>AÇÃO</th>
@@ -272,8 +334,15 @@ $(document).ready(function () {
                         </thead>
                         <tbody>
                         </tbody>
-                    </table>
-                </div>`;
+                        </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+            
+            `;
     }
 
     $(document).on('click', '#button-delete-specialty', function deleteEspecialidadeDoctor() {
@@ -386,7 +455,7 @@ $(document).ready(function () {
                         delay: 5000
                     })
                     setTimeout(function () {
-                        // location.reload();
+                        location.reload();
                     }, 5000);
                 }
             });
@@ -416,7 +485,7 @@ $(document).ready(function () {
                     delay: 5000
                 })
                 setTimeout(function () {
-                    // location.reload();
+                    location.reload();
                 }, 5000);
             }
         });
@@ -453,7 +522,7 @@ $(document).ready(function () {
                     delay: 5000
                 })
                 setTimeout(function () {
-                    // location.reload();
+                    location.reload();
                 }, 5000);
             }
         });
@@ -489,7 +558,6 @@ $(document).ready(function () {
             }
         }
         if (validation) {
-            console.log(selectedOptions);
             $.ajax({
                 type: 'POST',
                 headers: {
@@ -515,6 +583,17 @@ $(document).ready(function () {
                     limparFormRegister();
                 },
                 error: function (data) {
+                    if (data.status == 422) {
+                        $.each(data.responseJSON.errors, function (key, value) {
+                            bootstrap.showToast({
+                                body: value[0],
+                                toastClass: "text-warning-emphasis bg-warning-subtle",
+                                closeButtonClass: "btn-close",
+                                delay: 5000
+                            })
+                        });
+                        return;
+                    }
                     bootstrap.showToast({
                         body: "Ocorreu um erro inesperado, tente novamente mais tarde",
                         toastClass: "text-danger-emphasis bg-danger-subtle",
@@ -522,7 +601,7 @@ $(document).ready(function () {
                         delay: 5000
                     })
                     setTimeout(function () {
-                        // location.reload();
+                        location.reload();
                     }, 5000);
                 }
             });
@@ -535,7 +614,7 @@ $(document).ready(function () {
         $('.container-choice-specialty .multi-wrapper').remove()
         $("#form-register-choice-specialty").multi();
     }
-    
+
     listSpecialtySelectCreate();
 });
 

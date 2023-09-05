@@ -1,14 +1,6 @@
 @extends('includes.main')
-@section('styles')
-
-td.show-list-doctors {
-background: url("{{ asset('assets/icons/expandir.svg') }}") no-repeat center;
-cursor: pointer;
-}
-
-tr.shown td.show-list-doctors {
-background: url("{{ asset('assets/icons/fechar_expandir.svg') }}") no-repeat center;
-}
+@section('linkcss')
+<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/especialidade/index.css') }}">
 @endsection
 
 @section('content')
@@ -43,17 +35,16 @@ background: url("{{ asset('assets/icons/fechar_expandir.svg') }}") no-repeat cen
     <table id="table-datatable-especialidade" class="table cell-border stripe" style="width:100%">
         <thead>
             <tr>
-                <th>ID</th>
+                <th data-priority="1">CÓDIGO</th>
                 <th>NOME</th>
                 <th>DESCRIÇÃO</th>
-                <th>AÇÃO</th>
-                <th></th>
+                <th data-priority="2"></th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
-    <div class="modal fade" id="ModalEditar" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal fade" id="ModalEditar" tabindex="-1" aria-labelledby="ModalEditar" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">

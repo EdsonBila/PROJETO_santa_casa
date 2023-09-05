@@ -17,10 +17,33 @@ class EspecialidadeController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Especialidade::select('id', 'nome', 'descricao')->get();
-            return DataTables::of($data)->addColumn('acao', function ($data) {
-                return "<div class='container-buttons-datatable'><button type='button' data-id='{$data->id}' class='button-custom button-action' id='button-edit-register'>EDITAR</button><button type='button' data-id='{$data->id}' class='button-custom button-action' id='button-delete-register'>EXCLUIR</button></div>";
-            })->rawColumns(['acao'])->make(true);
+            try {
+                $data = Especialidade::select('id', 'nome', 'descricao')->get();
+                return DataTables::of($data)->addColumn('acao', function ($data) {
+                    return "<div class='container-buttons-datatable'><button type='button' data-id='{$data->id}' class='button-custom button-action' id='button-edit-register'>EDITAR</button><button type='button' data-id='{$data->id}' class='button-custom button-action' id='button-delete-register'>EXCLUIR</button><button type='button' class='button-custom button-action' id='button-open-vinculo'>VÍNCULOS</button></div>";
+                })->rawColumns(['acao'])->make(true);
+            } catch (ModelNotFoundException $e) {
+                Log::error('Erro ao obter especialidades (Registro não encontrado): ' . $e->getMessage(), [
+                    'action' => 'index - EspecialidadeController',
+                    'request_data' => $request,
+                    'exception' => $e
+                ]);
+                return response()->json([], 404);
+            } catch (QueryException $e) {
+                Log::error('Erro ao obter especialidades (Erro no banco de dados): ' . $e->getMessage(), [
+                    'action' => 'index - EspecialidadeController',
+                    'request_data' => $request,
+                    'exception' => $e
+                ]);
+                return response()->json([], 500);
+            } catch (\Exception $e) {
+                Log::error('Erro ao obter especialidades (Ocorreu um erro): ' . $e->getMessage(), [
+                    'action' => 'index - EspecialidadeController',
+                    'request_data' => $request,
+                    'exception' => $e
+                ]);
+                return response()->json([], 500);
+            }
         }
 
         return view('especialidades.especialidades');
@@ -39,21 +62,21 @@ class EspecialidadeController extends Controller
             return response()->json([], 201);
         } catch (QueryException $e) {
             Log::error('Erro ao cadastrar especialidade (Erro no banco de dados): ' . $e->getMessage(), [
-                'action' => 'store - Especialidade',
+                'action' => 'register - EspecialidadeController',
                 'request_data' => $data,
                 'exception' => $e
             ]);
             return response()->json([], 500);
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Erro ao cadastrar especialidade (Erro de validação): ' . $e->getMessage(), [
-                'action' => 'store - Especialidade',
+                'action' => 'register - EspecialidadeController',
                 'request_data' => $data,
                 'exception' => $e
             ]);
             return response()->json([], 422);
         } catch (\Exception $e) {
             Log::error('Erro ao cadastrar especialidade (Ocorreu um erro): ' . $e->getMessage(), [
-                'action' => 'store - Especialidade',
+                'action' => 'register - EspecialidadeController',
                 'request_data' => $data,
                 'exception' => $e
             ]);
@@ -68,21 +91,21 @@ class EspecialidadeController extends Controller
             return response()->json($especialidade);
         } catch (ModelNotFoundException $e) {
             Log::error('Erro ao buscar especialidade (Registro não encontrado): ' . $e->getMessage(), [
-                'action' => 'view - Especialidade',
+                'action' => 'view - EspecialidadeController',
                 'request_data' => $especialidadeId,
                 'exception' => $e
             ]);
             return response()->json([], 404);
         } catch (QueryException $e) {
             Log::error('Erro ao buscar especialidade (Erro no banco de dados): ' . $e->getMessage(), [
-                'action' => 'view - Especialidade',
+                'action' => 'view - EspecialidadeController',
                 'request_data' => $especialidadeId,
                 'exception' => $e
             ]);
             return response()->json([], 500);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar especialidade (Ocorreu um erro): ' . $e->getMessage(), [
-                'action' => 'view - Especialidade',
+                'action' => 'view - EspecialidadeController',
                 'request_data' => $especialidadeId,
                 'exception' => $e
             ]);
@@ -99,28 +122,28 @@ class EspecialidadeController extends Controller
             return response()->json([], 204);
         } catch (ModelNotFoundException $e) {
             Log::error('Erro ao editar especialidade (Registro não encontrado): ' . $e->getMessage(), [
-                'action' => 'update - Especialidade',
+                'action' => 'update - EspecialidadeController',
                 'request_data' => $data,
                 'exception' => $e
             ]);
             return response()->json([], 404);
         } catch (QueryException $e) {
             Log::error('Erro ao editar especialidade (Erro no banco de dados): ' . $e->getMessage(), [
-                'action' => 'update - Especialidade',
+                'action' => 'update - EspecialidadeController',
                 'request_data' => $data,
                 'exception' => $e
             ]);
             return response()->json([], 500);
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Erro ao editar especialidade (Erro de validação): ' . $e->getMessage(), [
-                'action' => 'update - Especialidade',
+                'action' => 'update - EspecialidadeController',
                 'request_data' => $data,
                 'exception' => $e
             ]);
             return response()->json([], 422);
         } catch (\Exception $e) {
             Log::error('Erro ao editar especialidade (Ocorreu um erro): ' . $e->getMessage(), [
-                'action' => 'update - Especialidade',
+                'action' => 'update - EspecialidadeController',
                 'request_data' => $data,
                 'exception' => $e
             ]);
@@ -136,21 +159,21 @@ class EspecialidadeController extends Controller
             return response()->json([], 204);
         } catch (ModelNotFoundException $e) {
             Log::error('Erro ao excluir especialidade (Registro não encontrado): ' . $e->getMessage(), [
-                'action' => 'destroy - Especialidade',
+                'action' => 'delete - EspecialidadeController',
                 'request_data' => "id: $especialidadeId",
                 'exception' => $e
             ]);
             return response()->json([], 404);
         } catch (QueryException $e) {
             Log::error('Erro ao excluir especialidade (Erro no banco de dados): ' . $e->getMessage(), [
-                'action' => 'destroy - Especialidade',
+                'action' => 'delete - EspecialidadeController',
                 'request_data' => "id: $especialidadeId",
                 'exception' => $e
             ]);
             return response()->json([], 500);
         } catch (\Exception $e) {
             Log::error('Erro ao excluir especialidade (Ocorreu um erro): ' . $e->getMessage(), [
-                'action' => 'destroy - Especialidade',
+                'action' => 'delete - EspecialidadeController',
                 'request_data' => "id: $especialidadeId",
                 'exception' => $e
             ]);
@@ -158,36 +181,39 @@ class EspecialidadeController extends Controller
         }
     }
 
-    public function listDoctorsSelected(string $especialidadeId)
+    public function listDoctorsSelected(Request $request, string $especialidadeId)
     {
-        try {
-            $especialidade = Especialidade::findOrFail($especialidadeId);
-            $medicos = $especialidade->medicos()->select('id', 'nome', 'CRM', 'telefone', 'email')->get();
-            return DataTables::of($medicos)->addColumn('acao', function ($medicos) use ($especialidadeId) {
-                return "<div class='container-buttons-datatable'><button type='button' data-id_medico='{$medicos->id}' data-id_especialidade='{$especialidadeId}' class='button-custom button-action' id='button-delete-doctor'>DESVINCULAR</button></div>";
-            })->rawColumns(['acao'])->make(true);
-        } catch (ModelNotFoundException $e) {
-            Log::error('Erro ao obter médicos por especialidade (Registro não encontrado): ' . $e->getMessage(), [
-                'action' => 'listaMedicosSelecionados - Especialidade',
-                'request_data' => "id: $especialidadeId",
-                'exception' => $e
-            ]);
-            return response()->json([], 404);
-        } catch (QueryException $e) {
-            Log::error('Erro ao obter médicos por especialidade (Erro no banco de dados): ' . $e->getMessage(), [
-                'action' => 'listaMedicosSelecionados - Especialidade',
-                'request_data' => "id: $especialidadeId",
-                'exception' => $e
-            ]);
-            return response()->json([], 500);
-        } catch (\Exception $e) {
-            Log::error('Erro ao obter médicos por especialidade (Ocorreu um erro): ' . $e->getMessage(), [
-                'action' => 'listaMedicosSelecionados - Especialidade',
-                'request_data' => "id: $especialidadeId",
-                'exception' => $e
-            ]);
-            return response()->json([], 500);
+        if ($request->ajax()) {
+            try {
+                $especialidade = Especialidade::findOrFail($especialidadeId);
+                $medicos = $especialidade->medicos()->select('id', 'nome', 'CRM', 'telefone', 'email')->get();
+                return DataTables::of($medicos)->addColumn('acao', function ($medicos) use ($especialidadeId) {
+                    return "<div class='container-buttons-datatable'><button type='button' data-id_medico='{$medicos->id}' data-id_especialidade='{$especialidadeId}' class='button-custom button-action' id='button-delete-doctor'>DESVINCULAR</button></div>";
+                })->rawColumns(['acao'])->make(true);
+            } catch (ModelNotFoundException $e) {
+                Log::error('Erro ao obter médicos por especialidade (Registro não encontrado): ' . $e->getMessage(), [
+                    'action' => 'listDoctorsSelected - EspecialidadeController',
+                    'request_data' => "id: $especialidadeId",
+                    'exception' => $e
+                ]);
+                return response()->json([], 404);
+            } catch (QueryException $e) {
+                Log::error('Erro ao obter médicos por especialidade (Erro no banco de dados): ' . $e->getMessage(), [
+                    'action' => 'listDoctorsSelected - EspecialidadeController',
+                    'request_data' => "id: $especialidadeId",
+                    'exception' => $e
+                ]);
+                return response()->json([], 500);
+            } catch (\Exception $e) {
+                Log::error('Erro ao obter médicos por especialidade (Ocorreu um erro): ' . $e->getMessage(), [
+                    'action' => 'listDoctorsSelected - EspecialidadeController',
+                    'request_data' => "id: $especialidadeId",
+                    'exception' => $e
+                ]);
+                return response()->json([], 500);
+            }
         }
+        return response()->json([], 404);
     }
 
     public function listDoctorsNotRelated(string $especialidadeId)
@@ -200,14 +226,14 @@ class EspecialidadeController extends Controller
             return response()->json($medicosNaoRelacionados);
         } catch (QueryException $e) {
             Log::error('Erro ao obter médicos não relacionados à especialidade (Erro no banco de dados): ' . $e->getMessage(), [
-                'action' => 'listaMedicosNaoRelacionados - Especialidade',
+                'action' => 'listDoctorsNotRelated - EspecialidadeController',
                 'request_data' => "id: $especialidadeId",
                 'exception' => $e
             ]);
             return response()->json([], 500);
         } catch (\Exception $e) {
             Log::error('Erro ao obter médicos não relacionados à especialidade (Ocorreu um erro): ' . $e->getMessage(), [
-                'action' => 'listaMedicosNaoRelacionados - Especialidade',
+                'action' => 'listDoctorsNotRelated - EspecialidadeController',
                 'request_data' => "id: $especialidadeId",
                 'exception' => $e
             ]);
@@ -224,21 +250,21 @@ class EspecialidadeController extends Controller
             return response()->json([], 204);
         } catch (ModelNotFoundException $e) {
             Log::error('Erro ao desvincular médico (Registro não encontrado): ' . $e->getMessage(), [
-                'action' => 'unbindDoctor - Especialidade',
+                'action' => 'unbindDoctor - EspecialidadeController',
                 'request_data' => "id-especialidade: $especialidadeId, id-medico: $medicoId",
                 'exception' => $e
             ]);
             return response()->json([], 404);
         } catch (QueryException $e) {
             Log::error('Erro ao desvincular médico (Erro no banco de dados): ' . $e->getMessage(), [
-                'action' => 'unbindDoctor - Especialidade',
+                'action' => 'unbindDoctor - EspecialidadeController',
                 'request_data' => "id-especialidade: $especialidadeId, id-medico: $medicoId",
                 'exception' => $e
             ]);
             return response()->json([], 500);
         } catch (\Exception $e) {
             Log::error('Erro ao desvincular médico (Ocorreu um erro): ' . $e->getMessage(), [
-                'action' => 'unbindDoctor - Especialidade',
+                'action' => 'unbindDoctor - EspecialidadeController',
                 'request_data' => "id-especialidade: $especialidadeId, id-medico: $medicoId",
                 'exception' => $e
             ]);
@@ -255,21 +281,21 @@ class EspecialidadeController extends Controller
             return response()->json([], 201);
         } catch (ModelNotFoundException $e) {
             Log::error('Erro ao vincular médico (Registro não encontrado): ' . $e->getMessage(), [
-                'action' => 'linkDoctors - Especialidade',
+                'action' => 'linkDoctors - EspecialidadeController',
                 'request_data' => "id-especialidade: $especialidadeId, id-medico: $medicosIds",
                 'exception' => $e
             ]);
             return response()->json([], 404);
         } catch (QueryException $e) {
             Log::error('Erro ao vincular especialidade (Erro no banco de dados): ' . $e->getMessage(), [
-                'action' => 'linkDoctors - Especialidade',
+                'action' => 'linkDoctors - EspecialidadeController',
                 'request_data' => $request,
                 'exception' => $e
             ]);
             return response()->json([], 500);
         } catch (\Exception $e) {
             Log::error('Erro ao vincular especialidade (Ocorreu um erro): ' . $e->getMessage(), [
-                'action' => 'linkDoctors - Especialidade',
+                'action' => 'linkDoctors - EspecialidadeController',
                 'request_data' => $request,
                 'exception' => $e
             ]);
@@ -284,13 +310,13 @@ class EspecialidadeController extends Controller
             return response()->json($dados);
         } catch (QueryException $e) {
             Log::error('Erro ao listar especialidades (Erro no banco de dados): ' . $e->getMessage(), [
-                'action' => 'list - Especialidade',
+                'action' => 'list - EspecialidadeController',
                 'exception' => $e
             ]);
             return response()->json([], 500);
         } catch (\Exception $e) {
             Log::error('Erro ao listar especialidades (Ocorreu um erro): ' . $e->getMessage(), [
-                'action' => 'list - Especialidade',
+                'action' => 'list - EspecialidadeController',
                 'exception' => $e
             ]);
             return response()->json([], 500);
