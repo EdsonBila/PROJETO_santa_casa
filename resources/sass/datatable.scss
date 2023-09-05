@@ -16,18 +16,18 @@
 }
 
 #button-edit-register,
-#button-delete-register, #button-delete-doctor{
+#button-delete-register, #button-delete-doctor, #button-delete-specialty{
     background-color: #1c388b;
     color: #FFFFFF;
 }
 
 #button-edit-register:hover,
-#button-delete-register:hover, #button-delete-doctor:hover {
+#button-delete-register:hover, #button-delete-doctor:hover, #button-delete-specialty:hover {
     background-color: #118fb8;
     color: #FFFFFF;
 }
 
-.show-list-doctors {
+.show-list-doctors, .show-list-specialty {
     width: 40px;
 }
 

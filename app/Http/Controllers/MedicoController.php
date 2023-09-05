@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\EspecialidadeRequest;
+use App\Http\Requests\MedicoRequest;
 use App\Models\Especialidade;
 use App\Models\Medico;
 use Illuminate\Http\Request;
@@ -13,60 +13,268 @@ use DataTables;
 
 class MedicoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if ($request->ajax()) {
+            $data = Medico::select('id', 'nome', 'CRM', 'telefone', 'email', 'dt_cadastro')->get();
+            return DataTables::of($data)->addColumn('acao', function ($data) {
+                return "<div class='container-buttons-datatable'><button type='button' data-id='{$data->id}' class='button-custom button-action' id='button-edit-register'>EDITAR</button><button type='button' data-id='{$data->id}' class='button-custom button-action' id='button-delete-register'>EXCLUIR</button></div>";
+            })->rawColumns(['acao'])->make(true);
+        }
+
+        return view('medicos.medicos');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function register(MedicoRequest $request)
     {
-        //
+        try {
+            $data = $request->validated();
+            $medico = Medico::create([
+                'nome' => $data['nome'],
+                'CRM' => $data['CRM'],
+                'telefone'=>$data['telefone'],
+                'email'=>$data['email'],
+            ]);
+            $especialidadesIds = $data['especialidades'];
+            $medico->especialidades()->attach($especialidadesIds);
+            return response()->json([], 201);
+        } catch (QueryException $e) {
+            Log::error('Erro ao cadastrar medico (Erro no banco de dados): ' . $e->getMessage(), [
+                'action' => 'register - MedicoController',
+                'request_data' => $data,
+                'exception' => $e
+            ]);
+            return response()->json([], 500);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Erro ao cadastrar medico (Erro de validação): ' . $e->getMessage(), [
+                'action' => 'register - MedicoController',
+                'request_data' => $data,
+                'exception' => $e
+            ]);
+            return response()->json([], 422);
+        } catch (\Exception $e) {
+            Log::error('Erro ao cadastrar medico (Ocorreu um erro): ' . $e->getMessage(), [
+                'action' => 'register - MedicoController',
+                'request_data' => $data,
+                'exception' => $e
+            ]);
+            return response()->json([], 500);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function view(string $medicoId)
     {
-        //
+        try {
+            $medico = Medico::findOrFail($medicoId);
+            return response()->json($medico);
+        } catch (ModelNotFoundException $e) {
+            Log::error('Erro ao buscar medico (Registro não encontrado): ' . $e->getMessage(), [
+                'action' => 'view - MedicoController',
+                'request_data' => $medicoId,
+                'exception' => $e
+            ]);
+            return response()->json([], 404);
+        } catch (QueryException $e) {
+            Log::error('Erro ao buscar medico (Erro no banco de dados): ' . $e->getMessage(), [
+                'action' => 'view - MedicoController',
+                'request_data' => $medicoId,
+                'exception' => $e
+            ]);
+            return response()->json([], 500);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar medico (Ocorreu um erro): ' . $e->getMessage(), [
+                'action' => 'view - MedicoController',
+                'request_data' => $medicoId,
+                'exception' => $e
+            ]);
+            return response()->json([], 500);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function update(MedicoRequest $request, string $medicoId)
     {
-        //
+        try {
+            $data = $request->validated();
+            $medico = Medico::findOrFail($medicoId);
+            $medico->update(['nome' => $data['nome'], 'CRM' => $data['CRM'], 'telefone' => $data['telefone']]);
+            return response()->json([], 204);
+        } catch (ModelNotFoundException $e) {
+            Log::error('Erro ao editar medico (Registro não encontrado): ' . $e->getMessage(), [
+                'action' => 'update - MedicoController',
+                'request_data' => $data,
+                'exception' => $e
+            ]);
+            return response()->json([], 404);
+        } catch (QueryException $e) {
+            Log::error('Erro ao editar medico (Erro no banco de dados): ' . $e->getMessage(), [
+                'action' => 'update - MedicoController',
+                'request_data' => $data,
+                'exception' => $e
+            ]);
+            return response()->json([], 500);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Erro ao editar medico (Erro de validação): ' . $e->getMessage(), [
+                'action' => 'update - MedicoController',
+                'request_data' => $data,
+                'exception' => $e
+            ]);
+            return response()->json([], 422);
+        } catch (\Exception $e) {
+            Log::error('Erro ao editar medico (Ocorreu um erro): ' . $e->getMessage(), [
+                'action' => 'update - MedicoController',
+                'request_data' => $data,
+                'exception' => $e
+            ]);
+            return response()->json([], 500);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function delete(string $medicoId)
     {
-        //
+        try {
+            $medico = Medico::findOrFail($medicoId);
+            $medico->delete();
+            return response()->json([], 204);
+        } catch (ModelNotFoundException $e) {
+            Log::error('Erro ao excluir medico (Registro não encontrado): ' . $e->getMessage(), [
+                'action' => 'delete - MedicoController',
+                'request_data' => "id: $medicoId",
+                'exception' => $e
+            ]);
+            return response()->json([], 404);
+        } catch (QueryException $e) {
+            Log::error('Erro ao excluir medico (Erro no banco de dados): ' . $e->getMessage(), [
+                'action' => 'delete - MedicoController',
+                'request_data' => "id: $medicoId",
+                'exception' => $e
+            ]);
+            return response()->json([], 500);
+        } catch (\Exception $e) {
+            Log::error('Erro ao excluir medico (Ocorreu um erro): ' . $e->getMessage(), [
+                'action' => 'delete - MedicoController',
+                'request_data' => "id: $medicoId",
+                'exception' => $e
+            ]);
+            return response()->json([], 500);
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function listSpecialtySelected(string $medicoId)
     {
-        //
+        try {
+            $medico = Medico::findOrFail($medicoId);
+            $especialidade = $medico->especialidades()->select('id', 'nome', 'descricao')->get();
+            return DataTables::of($especialidade)->addColumn('acao', function ($especialidade) use ($medicoId) {
+                return "<div class='container-buttons-datatable'><button type='button' data-id_medico='{$medicoId}' data-id_especialidade='{$especialidade->id}' class='button-custom button-action' id='button-delete-specialty'>DESVINCULAR</button></div>";
+            })->rawColumns(['acao'])->make(true);
+        } catch (ModelNotFoundException $e) {
+            Log::error('Erro ao obter especialidade por medico (Registro não encontrado): ' . $e->getMessage(), [
+                'action' => 'listSpecialtySelected - MedicoController',
+                'request_data' => "id: $medicoId",
+                'exception' => $e
+            ]);
+            return response()->json([], 404);
+        } catch (QueryException $e) {
+            Log::error('Erro ao obter especialidade por medico (Erro no banco de dados): ' . $e->getMessage(), [
+                'action' => 'listSpecialtySelected - MedicoController',
+                'request_data' => "id: $medicoId",
+                'exception' => $e
+            ]);
+            return response()->json([], 500);
+        } catch (\Exception $e) {
+            Log::error('Erro ao obter especialidade por medico (Ocorreu um erro): ' . $e->getMessage(), [
+                'action' => 'listSpecialtySelected - MedicoController',
+                'request_data' => "id: $medicoId",
+                'exception' => $e
+            ]);
+            return response()->json([], 500);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function listSpecialtyNotRelated(string $medicoId)
     {
-        //
+        try {
+            $especialidadeNaoRelacionados = Especialidade::whereDoesntHave('medicos', function ($query) use ($medicoId) {
+                $query->where('medico_id', $medicoId);
+            })->select('id', 'nome')->get();
+            return response()->json($especialidadeNaoRelacionados);
+        } catch (QueryException $e) {
+            Log::error('Erro ao obter especialidade não relacionados à medicos (Erro no banco de dados): ' . $e->getMessage(), [
+                'action' => 'listSpecialtyNotRelated - MedicoController',
+                'request_data' => "id: $medicoId",
+                'exception' => $e
+            ]);
+            return response()->json([], 500);
+        } catch (\Exception $e) {
+            Log::error('Erro ao obter especialidade não relacionados à medicos (Ocorreu um erro): ' . $e->getMessage(), [
+                'action' => 'listSpecialtyNotRelated - MedicoController',
+                'request_data' => "id: $medicoId",
+                'exception' => $e
+            ]);
+            return response()->json([], 500);
+        }
+    }
+
+    public function unbindSpecialty(String $medicoId, string $especialidadeId)
+    {
+        try {
+            $especialidade = Especialidade::findOrFail($especialidadeId);
+            $medico = Medico::findOrFail($medicoId);
+            $especialidade->medicos()->detach($medico);
+            return response()->json([], 204);
+        } catch (ModelNotFoundException $e) {
+            Log::error('Erro ao desvincular especialidade (Registro não encontrado): ' . $e->getMessage(), [
+                'action' => 'unbindSpecialty - MedicoController',
+                'request_data' => "id-especialidade: $especialidadeId, id-medico: $medicoId",
+                'exception' => $e
+            ]);
+            return response()->json([], 404);
+        } catch (QueryException $e) {
+            Log::error('Erro ao desvincular especialidade (Erro no banco de dados): ' . $e->getMessage(), [
+                'action' => 'unbindSpecialty - MedicoController',
+                'request_data' => "id-especialidade: $especialidadeId, id-medico: $medicoId",
+                'exception' => $e
+            ]);
+            return response()->json([], 500);
+        } catch (\Exception $e) {
+            Log::error('Erro ao desvincular especialidade (Ocorreu um erro): ' . $e->getMessage(), [
+                'action' => 'unbindSpecialty - MedicoController',
+                'request_data' => "id-especialidade: $especialidadeId, id-medico: $medicoId",
+                'exception' => $e
+            ]);
+            return response()->json([], 500);
+        }
+    }
+
+    public function linkSpecialty(Request $request, string $medicoId)
+    {
+        try {
+            $medico = Medico::findOrFail($medicoId);
+            $especialidadesIds =  $request->input('especialidades', []);
+            $medico->especialidades()->attach($especialidadesIds);
+            return response()->json([], 201);
+        } catch (ModelNotFoundException $e) {
+            Log::error('Erro ao vincular especialidade (Registro não encontrado): ' . $e->getMessage(), [
+                'action' => 'linkSpecialty - MedicoController',
+                'request_data' => "id-especialidade: $medicoId, id-medico: $especialidadesIds",
+                'exception' => $e
+            ]);
+            return response()->json([], 404);
+        } catch (QueryException $e) {
+            Log::error('Erro ao vincular especialidade (Erro no banco de dados): ' . $e->getMessage(), [
+                'action' => 'linkSpecialty - MedicoController',
+                'request_data' => "id-especialidade: $medicoId, id-medico: $especialidadesIds",
+                'exception' => $e
+            ]);
+            return response()->json([], 500);
+        } catch (\Exception $e) {
+            Log::error('Erro ao vincular especialidade (Ocorreu um erro): ' . $e->getMessage(), [
+                'action' => 'linkSpecialty - MedicoController',
+                'request_data' => "id-especialidade: $medicoId, id-medico: $especialidadesIds",
+                'exception' => $e
+            ]);
+            return response()->json([], 500);
+        }
     }
 
     public function list()
@@ -76,13 +284,13 @@ class MedicoController extends Controller
             return response()->json($dados);
         } catch (QueryException $e) {
             Log::error('Erro ao listar médicos (Erro no banco de dados): ' . $e->getMessage(), [
-                'action' => 'lista - Médicos',
+                'action' => 'list - MedicoController',
                 'exception' => $e
             ]);
             return response()->json([], 500);
         } catch (\Exception $e) {
             Log::error('Erro ao listar médicos (Ocorreu um erro): ' . $e->getMessage(), [
-                'action' => 'lista - Médicos',
+                'action' => 'list - MedicoController',
                 'exception' => $e
             ]);
             return response()->json([], 500);

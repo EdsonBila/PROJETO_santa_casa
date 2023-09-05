@@ -20,11 +20,11 @@ background: url("{{ asset('assets/icons/fechar_expandir.svg') }}") no-repeat cen
     </div>
     <div class="container-register" style="display: none;">
         <div class="container-input">
-            <label for="form-register-choice-doctor" class="label-input">Nome da Especialidade (Obrigatório)</label>
+            <label for="form-register-name" class="label-input">Nome da Especialidade (Obrigatório)</label>
             <input type="text" class="validate-form-create input-form" id="form-register-name" placeholder="Informe o nome da especialidade">
         </div>
         <div class="container-input">
-            <label for="form-register-choice-doctor" class="label-input">Descrição da Especialidade (Obrigatório)</label>
+            <label for="form-register-description" class="label-input">Descrição da Especialidade (Obrigatório)</label>
             <textarea rows="4" class="validate-form-create input-form" id="form-register-description" cols="50" maxlength="45" placeholder="Informe uma descrição"></textarea>
             <span class="count-caracter count-caracter-create">Quantidade de caracteres: 0/45</span>
         </div>
@@ -44,9 +44,9 @@ background: url("{{ asset('assets/icons/fechar_expandir.svg') }}") no-repeat cen
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Nome</th>
-                <th>Descrição</th>
-                <th>Ação</th>
+                <th>NOME</th>
+                <th>DESCRIÇÃO</th>
+                <th>AÇÃO</th>
                 <th></th>
             </tr>
         </thead>

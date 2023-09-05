@@ -1,32 +1,32 @@
 $(document).ready(function () {
-    $('.especialidade-nav-item').addClass('active-button-menu');
-    // datatable primaria - lista de especialidade
-    dataTable = $('#table-datatable-especialidade').DataTable({
+    $('.medico-nav-item').addClass('active-button-menu');
+    // datatable primaria - lista de medicos
+    dataTable = $('#table-datatable-medico').DataTable({
         aaSorting: [[0, 'desc']],
         dom: 'B<"buttons-search-row"lf>rt<"bottom"ip><"clear">',
         buttons: [
             {
                 extend: 'excel',
                 autoFilter: true,
-                sheetName: 'ESPECIALIDADES',
-                titleAttr: 'ESPECIALIDADES',
+                sheetName: 'MEDICOS',
+                titleAttr: 'MEDICOS',
                 action: newexportaction,
-                title: 'ESPECIALIDADES',
-                filename: 'ESPECIALIDADES',
+                title: 'MEDICOS',
+                filename: 'MEDICOS',
                 exportOptions: {
-                    columns: [1, 2]
+                    columns: [1, 2, 3, 4, 5]
                 }
             },
             {
-                title: 'ESPECIALIDADES',
+                title: 'MEDICOS',
                 download: 'open',
-                sheetName: 'ESPECIALIDADES',
+                sheetName: 'MEDICOS',
                 extend: 'pdf',
                 titleAttr: 'PDF',
-                filename: 'ESPECIALIDADES',
+                filename: 'MEDICOS',
                 action: newexportaction,
                 exportOptions: {
-                    columns: [1, 2]
+                    columns: [1, 2, 3, 4 ,5]
                 }
             }],
         responsive: {
@@ -54,7 +54,7 @@ $(document).ready(function () {
                         $('<table/>').append(data) :
                         false;
                 }
-            }
+            },
         },
         lengthMenu: [5, 10, 25, 50, 100],
         pageLength: 5,
@@ -66,15 +66,18 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         ajax: {
-            url: "/especialidade",
+            url: "/medico",
             type: 'GET'
         },
         columns: [
             { data: 'id', name: 'id' },
             { data: 'nome', name: 'nome' },
-            { data: 'descricao', name: 'descricao' },
+            { data: 'CRM', name: 'CRM' },
+            { data: 'telefone', name: 'telefone' },
+            { data: 'email', name: 'email' },
+            { data: 'dt_cadastro', name: 'dt_cadastro' },
             { data: 'acao', name: 'acao', orderable: false, searchable: false },
-            { data: null, orderable: false, searchable: false, className: 'show-list-doctors', "defaultContent": '' }
+            { data: null, orderable: false, searchable: false, className: 'show-list-specialty', "defaultContent": '' }
         ]
     });
 
@@ -87,11 +90,12 @@ $(document).ready(function () {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                 'Content-Type': 'application/json'
             },
-            url: `/especialidade/${id}/visualizar`,
+            url: `/medico/${id}/visualizar`,
             success: function (data) {
-                $('#form-update-description').val(data.descricao);
                 $('#form-update-name').val(data.nome);
-                countCharacters(data.descricao.length, '.count-caracter-update')
+                $('#form-update-CRM').val(data.CRM);
+                $('#form-update-telefone').val(data.telefone);
+                $('#form-update-email').val(data.email);
             },
             error: function (data) {
                 bootstrap.showToast({
@@ -101,7 +105,7 @@ $(document).ready(function () {
                     delay: 5000
                 })
                 setTimeout(function () {
-                    location.reload();
+                    // location.reload();
                 }, 5000);
             }
         });
@@ -117,20 +121,22 @@ $(document).ready(function () {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                     'Content-Type': 'application/json'
                 },
-                url: `/especialidade/${id}/editar`,
+                url: `/medico/${id}/editar`,
                 data: JSON.stringify({
                     'nome': $('#form-update-name').val(),
-                    'descricao': $('#form-update-description').val(),
+                    'CRM': $('#form-update-CRM').val(),
+                    'telefone': $('#form-update-telefone').val(),
+                    'email': $('#form-update-email').val(),
                 }),
                 dataType: 'json',
                 success: function (data) {
                     bootstrap.showToast({
-                        body: "Especialidade editada com sucesso",
+                        body: "Médico editado com sucesso",
                         toastClass: "text-success-emphasis bg-success-subtle",
                         closeButtonClass: "btn-close"
                     })
                     $('#ModalEditar').modal('hide');
-                    reloadDataTable('#table-datatable-especialidade');
+                    reloadDataTable('#table-datatable-medico');
                 },
                 error: function (data) {
                     bootstrap.showToast({
@@ -140,7 +146,7 @@ $(document).ready(function () {
                         delay: 5000
                     })
                     setTimeout(function () {
-                        location.reload();
+                        // location.reload();
                     }, 5000);
                 }
             });
@@ -168,14 +174,14 @@ $(document).ready(function () {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                     'Content-Type': 'application/json'
                 },
-                url: `/especialidade/${id}/excluir`,
+                url: `/medico/${id}/excluir`,
                 success: function (data) {
                     bootstrap.showToast({
-                        body: "Especialidade excluída com sucesso",
+                        body: "Médico excluído com sucesso",
                         toastClass: "text-success-emphasis bg-success-subtle",
                         closeButtonClass: "btn-close"
                     })
-                    reloadDataTable('#table-datatable-especialidade');
+                    reloadDataTable('#table-datatable-medico');
                 },
                 error: function (data) {
                     bootstrap.showToast({
@@ -185,15 +191,15 @@ $(document).ready(function () {
                         delay: 5000
                     })
                     setTimeout(function () {
-                        location.reload();
+                        // location.reload();
                     }, 5000);
                 }
             });
         })
     })
 
-    // datatable secundaria - lista de medicos selecionados
-    $('#table-datatable-especialidade tbody').on('click', 'td.show-list-doctors', function listDoctors() {
+    // datatable secundaria - lista de especialidades selecionados
+    $('#table-datatable-medico tbody').on('click', 'td.show-list-specialty', function listSpecialty() {
         var tr = $(this).closest('tr');
         var row = dataTable.row(tr);
         var isRowExpanded = tr.hasClass('shown');
@@ -211,9 +217,9 @@ $(document).ready(function () {
             tr.removeClass('shown row-shown-list-doctors');
         } else {
             var data = row.data();
-            row.child(listDoctorsChildRow(data.id)).show();
+            row.child(listSpecialtyChildRow(data.id)).show();
             tr.addClass('shown row-shown-list-doctors');
-            $('#table-datatable-medico').DataTable({
+            $('#table-datatable-especialidade').DataTable({
                 aaSorting: [[0, 'desc']],
                 responsive: true,
                 lengthMenu: [5, 10, 25, 50, 100],
@@ -226,46 +232,42 @@ $(document).ready(function () {
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: `/especialidade/${data.id}/listaMedicosSelecionados`,
+                    url: `/medico/${data.id}/listaEspecialidadesSelecionadas`,
                     type: "GET"
                 },
                 columns: [
                     { data: 'id', name: 'id' },
                     { data: 'nome', name: 'nome' },
-                    { data: 'CRM', name: 'CRM' },
-                    { data: 'telefone', name: 'telefone' },
-                    { data: 'email', name: 'email' },
+                    { data: 'descricao', name: 'descricao' },
                     { data: 'acao', name: 'acao', orderable: false, searchable: false },
                 ],
             });
-            listDoctorsSelectAdd(data.id);
+            listSpecialtySelectAdd(data.id);
         }
     });
 
-    function listDoctorsChildRow(especialidadeId) {
+    function listSpecialtyChildRow(medicoId) {
         return `<div style="padding: 4px;margin: 2px;">
                     <div class="container-update-doctor">
                         <div class="container-list-doctor-header">
-                            <h1 class="list-doctor-title">Médicos</h1>
-                            <span class="icon-add-doctor" id="button-action-add-doctor"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg></span>
+                            <h1 class="list-doctor-title">Especialidade</h1>
+                            <span class="icon-add-doctor" id="button-action-add-specialty"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg></span>
                         </div>
-                        <div id="container-choice-doctor-database" style="display: none">
-                            <select id="select-add-choice-doctor" multiple style="display: none"></select>
+                        <div id="container-choice-specialty-datatable" style="display: none">
+                            <select id="select-add-choice-specialty" multiple style="display: none"></select>
                             <div class="container-buttons-action">
-                                <button type="button" class="button-custom" id="button-cancel-add-doctor">CANCELAR</button>
-                                <button type="button" class="button-custom" id="button-save-add-doctor" data-id_especialidade="${especialidadeId}">SALVAR</button>
+                                <button type="button" class="button-custom" id="button-cancel-add-specialty">CANCELAR</button>
+                                <button type="button" class="button-custom" id="button-save-add-specialty" data-id_medico="${medicoId}">SALVAR</button>
                             </div>
                         </div>
                     </div>
-                    <table class="highlight centered" id="table-datatable-medico" style="width:100%;">
+                    <table class="highlight centered" id="table-datatable-especialidade" style="width:100%;">
                         <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>NOME</th>
-                                <th>CRM</th>
-                                <th>TELEFONE</th>
-                                <th>E-MAIL</th>
-                                <th>AÇÃO<th>
+                                <th>DESCRIÇÃO</th>
+                                <th>AÇÃO</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -274,7 +276,7 @@ $(document).ready(function () {
                 </div>`;
     }
 
-    $(document).on('click', '#button-delete-doctor', function deleteEspecialidadeDoctor() {
+    $(document).on('click', '#button-delete-specialty', function deleteEspecialidadeDoctor() {
         var medicoId = $(this).data('id_medico');
         var especialidadeId = $(this).data('id_especialidade');
         $('body').css('pointer-events', 'none');
@@ -296,19 +298,19 @@ $(document).ready(function () {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                     'Content-Type': 'application/json'
                 },
-                url: `/especialidade/${medicoId}/${especialidadeId}/desvincularMedico`,
+                url: `/medico/${medicoId}/${especialidadeId}/desvincularEspecialidades`,
                 success: function (data) {
                     bootstrap.showToast({
-                        body: "Médico desvinculado com sucesso",
+                        body: "Especialidade desvinculada com sucesso",
                         toastClass: "text-success-emphasis bg-success-subtle",
                         closeButtonClass: "btn-close"
                     })
-                    reloadDataTable('#table-datatable-medico');
-                    $('#select-add-choice-doctor').val('');
-                    $('#select-add-choice-doctor').removeAttr('data-multijs');
-                    $('#container-choice-doctor-database .multi-wrapper').remove()
-                    $("#form-register-choice-doctor").multi();
-                    listDoctorsSelectAdd(especialidadeId)
+                    reloadDataTable('#table-datatable-especialidade');
+                    $('#select-add-choice-specialty').val('');
+                    $('#select-add-choice-specialty').removeAttr('data-multijs');
+                    $('#container-choice-specialty-datatable .multi-wrapper').remove()
+                    $("#form-register-choice-specialty").multi();
+                    listSpecialtySelectAdd(medicoId)
                 },
                 error: function (data) {
                     bootstrap.showToast({
@@ -325,29 +327,28 @@ $(document).ready(function () {
         })
     })
 
-    $(document).on('click', '#button-action-add-doctor, #button-cancel-add-doctor', function showAddEspecialidadeDoctor() {
-        if ($("#select-add-choice-doctor").find("option").length > 0) {
-            $('#container-choice-doctor-database').toggle();
+    $(document).on('click', '#button-action-add-specialty, #button-cancel-add-specialty', function showAddMedicoSpecialty() {
+        if ($("#select-add-choice-specialty").find("option").length > 0) {
+            $('#container-choice-specialty-datatable').toggle();
             return
         }
         bootstrap.showToast({
-            body: "Nenhum médico disponível",
+            body: "Nenhuma especialidade disponível",
             toastClass: "text-warning-emphasis bg-warning-subtle",
             closeButtonClass: "btn-close"
         })
     })
 
-    $(document).on('click', '#button-save-add-doctor', function registerDoctor() {
-        var especialidadeId = $(this).data('id_especialidade');
-        console.log(especialidadeId)
+    $(document).on('click', '#button-save-add-specialty', function registerSpecialty() {
+        var medicoId = $(this).data('id_medico');
         var validation = true;
-        var selectedOptions = $('#select-add-choice-doctor option:selected').map(function () {
+        var selectedOptions = $('#select-add-choice-specialty option:selected').map(function () {
             return $(this).val();
         }).get();
         if (selectedOptions.length == 0) {
             validation = false;
             bootstrap.showToast({
-                body: "Selecione pelo menos um Médico",
+                body: "Selecione pelo menos uma especialidade",
                 toastClass: "text-warning-emphasis bg-warning-subtle",
                 closeButtonClass: "btn-close"
             })
@@ -359,23 +360,23 @@ $(document).ready(function () {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                     'Content-Type': 'application/json'
                 },
-                url: `/especialidade/${especialidadeId}/vincularMedico`,
+                url: `/medico/${medicoId}/vincularEspecialidades`,
                 data: JSON.stringify({
-                    'medicos': selectedOptions
+                    'especialidades': selectedOptions
                 }),
                 dataType: 'json',
                 success: function (data) {
                     bootstrap.showToast({
-                        body: "Médico(s) vinculados com sucesso",
+                        body: "Especialidade(s) vinculadas com sucesso",
                         toastClass: "text-success-emphasis bg-success-subtle",
                         closeButtonClass: "btn-close"
                     })
-                    reloadDataTable('#table-datatable-medico');
-                    $('#select-add-choice-doctor').val('');
-                    $('#select-add-choice-doctor').removeAttr('data-multijs');
-                    $('#container-choice-doctor-database .multi-wrapper').remove()
-                    $("#form-register-choice-doctor").multi();
-                    listDoctorsSelectAdd(especialidadeId)
+                    reloadDataTable('#table-datatable-especialidade');
+                    $('#select-add-choice-specialty').val('');
+                    $('#select-add-choice-specialty').removeAttr('data-multijs');
+                    $('#container-choice-specialty-datatable .multi-wrapper').remove()
+                    $("#form-register-choice-specialty").multi();
+                    listSpecialtySelectAdd(medicoId)
                 },
                 error: function (data) {
                     bootstrap.showToast({
@@ -385,23 +386,23 @@ $(document).ready(function () {
                         delay: 5000
                     })
                     setTimeout(function () {
-                        location.reload();
+                        // location.reload();
                     }, 5000);
                 }
             });
         }
     })
 
-    function listDoctorsSelectAdd(especialidadeId) {
+    function listSpecialtySelectAdd(medicoId) {
         $.ajax({
-            url: `/especialidade/${especialidadeId}/listaMedicosNaoSelecionados`,
+            url: `/medico/${medicoId}/listaEspecialidadesNaoSelecionadas`,
             type: 'GET',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                 'Content-Type': 'application/json'
             },
             success: function (data) {
-                var select = $("#select-add-choice-doctor");
+                var select = $("#select-add-choice-specialty");
                 select.empty();
                 $.each(data, function (key, value) {
                     select.append($('<option></option>').val(value.id).text(value.nome));
@@ -415,30 +416,30 @@ $(document).ready(function () {
                     delay: 5000
                 })
                 setTimeout(function () {
-                    location.reload();
+                    // location.reload();
                 }, 5000);
             }
         });
     }
 
-    // cadastro de especialidade
+    // cadastro de medicos
     $('#button-create, #button-cancel-create').on('click', function showFormRegister() {
         $('.container-register').toggle();
     });
 
-    function listDoctorsSelectCreate() {
+    function listSpecialtySelectCreate() {
         $.ajax({
-            url: '/medico/lista',
+            url: '/especialidade/lista',
             type: 'GET',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                 'Content-Type': 'application/json'
             },
             success: function (data) {
-                var select = $("#form-register-choice-doctor");
+                var select = $("#form-register-choice-specialty");
                 select.empty();
-                $("#form-register-choice-doctor-check").change(function () {
-                    showDoctorsList(data)
+                $("#form-register-choice-specialty-check").change(function () {
+                    showSpecialtyList(data)
                 });
                 $.each(data, function (key, value) {
                     select.append($('<option></option>').val(value.id).text(value.nome));
@@ -452,68 +453,65 @@ $(document).ready(function () {
                     delay: 5000
                 })
                 setTimeout(function () {
-                    location.reload();
+                    // location.reload();
                 }, 5000);
             }
         });
     }
 
-    function showDoctorsList(data) {
-        if (data.length == 0 && $('#form-register-choice-doctor-check').prop('checked')) {
-            $('#form-register-choice-doctor-check').prop('checked', false)
+    function showSpecialtyList(data) {
+        if (data.length == 0 && $('#form-register-choice-specialty-check').prop('checked')) {
+            $('#form-register-choice-specialty-check').prop('checked', false)
             bootstrap.showToast({
-                body: "Nenhum médico foi cadastrado ainda",
+                body: "Nenhuma especialidade foi cadastrada ainda",
                 toastClass: "text-warning-emphasis bg-warning-subtle",
                 closeButtonClass: "btn-close"
             })
         } else {
-            $('.container-choice-doctor').toggle();
+            $('.container-choice-specialty').toggle();
         }
     }
-    // atualiza a quantidade a quantidade de caracteres da descricao
-    $('#form-register-description, #form-update-description').on('input', function () {
-        var amountString = $(this)[0].textLength;
-        var className = ($(this)[0].id == 'form-register-description' ? '.count-caracter-create' : '.count-caracter-update')
-        countCharacters(amountString, className)
-    })
 
-    $('#button-save-create').on('click', function createEspecialidade() {
+    $('#button-save-create').on('click', function createMedico() {
         var validation = validarInputs('.validate-form-create');
         var selectedOptions = [];
-        if ($("#form-register-choice-doctor-check").prop('checked') && validation) {
-            selectedOptions = $('#form-register-choice-doctor option:selected').map(function () {
+        if ($("#form-register-choice-specialty-check").prop('checked') && validation) {
+            selectedOptions = $('#form-register-choice-specialty option:selected').map(function () {
                 return $(this).val();
             }).get();
             if (selectedOptions.length == 0) {
                 validation = false;
                 bootstrap.showToast({
-                    body: "Selecione pelo menos um Médico",
+                    body: "Selecione pelo menos uma especialidade",
                     toastClass: "text-warning-emphasis bg-warning-subtle",
                     closeButtonClass: "btn-close"
                 })
             }
         }
         if (validation) {
+            console.log(selectedOptions);
             $.ajax({
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                     'Content-Type': 'application/json'
                 },
-                url: '/especialidade/registro',
+                url: '/medico/registro',
                 data: JSON.stringify({
                     'nome': $('#form-register-name').val(),
-                    'descricao': $('#form-register-description').val(),
-                    'medicos': selectedOptions
+                    'CRM': $('#form-register-CRM').val(),
+                    'telefone': $('#form-register-telefone').val(),
+                    'email': $('#form-register-email').val(),
+                    'especialidades': selectedOptions
                 }),
                 dataType: 'json',
                 success: function (data) {
                     bootstrap.showToast({
-                        body: "Especialidade cadastrada com sucesso",
+                        body: "Médico cadastrado com sucesso",
                         toastClass: "text-success-emphasis bg-success-subtle",
                         closeButtonClass: "btn-close"
                     })
-                    reloadDataTable('#table-datatable-especialidade');
+                    reloadDataTable('#table-datatable-medico');
                     limparFormRegister();
                 },
                 error: function (data) {
@@ -524,7 +522,7 @@ $(document).ready(function () {
                         delay: 5000
                     })
                     setTimeout(function () {
-                        location.reload();
+                        // location.reload();
                     }, 5000);
                 }
             });
@@ -532,25 +530,12 @@ $(document).ready(function () {
     })
 
     function limparFormRegister() {
-        $('#form-register-name, #form-register-description, #form-register-choice-doctor').val('');
-        countCharacters(0, '.count-caracter-create')
-        $('#form-register-choice-doctor').removeAttr('data-multijs');
-        $('.container-choice-doctor .multi-wrapper').remove()
-        $("#form-register-choice-doctor").multi();
+        $('#form-register-name, #form-register-CRM, #form-register-telefone, #form-register-email, #form-register-choice-specialty').val('');
+        $('#form-register-choice-specialty').removeAttr('data-multijs');
+        $('.container-choice-specialty .multi-wrapper').remove()
+        $("#form-register-choice-specialty").multi();
     }
-
-    function countCharacters(amountString, id) {
-        amountString = amountString < 10 ? '0' + amountString : amountString;
-        $(id).text(`Quantidade de caracteres: ${amountString}/45`);
-        if (amountString == 45) {
-            bootstrap.showToast({
-                body: "Limite de caracteres alcançado",
-                toastClass: "text-warning-emphasis bg-warning-subtle",
-                closeButtonClass: "btn-close"
-            })
-        }
-    }
-
-    listDoctorsSelectCreate();
+    
+    listSpecialtySelectCreate();
 });
 
