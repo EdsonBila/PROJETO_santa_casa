@@ -16,7 +16,7 @@ $(document).ready(function () {
                 title: 'MEDICOS',
                 filename: 'MEDICOS',
                 exportOptions: {
-                    columns: [1, 2, 3, 4, 5]
+                    columns: [0, 1, 2, 3, 4, 5]
                 }
             },
             {
@@ -28,7 +28,7 @@ $(document).ready(function () {
                 filename: 'MEDICOS',
                 action: newexportaction,
                 exportOptions: {
-                    columns: [1, 2, 3, 4, 5]
+                    columns: [0, 1, 2, 3, 4, 5]
                 }
             }],
         fixedHeader: true,
@@ -115,6 +115,7 @@ $(document).ready(function () {
     })
 
     $('#modal-button-edit-save').on('click', function updateEspecialidade() {
+        $('.ajax_load').show();
         var id = $('#button-edit-register').data('id');
         var validation = validarInputs('.validate-form-update');
         if (validation) {
@@ -133,6 +134,7 @@ $(document).ready(function () {
                 }),
                 dataType: 'json',
                 success: function (data) {
+                    $('.ajax_load').hide();
                     bootstrap.showToast({
                         body: "Médico editado com sucesso",
                         toastClass: "text-success-emphasis bg-success-subtle",
@@ -142,6 +144,7 @@ $(document).ready(function () {
                     reloadDataTable('#table-datatable-medico');
                 },
                 error: function (data) {
+                    $('.ajax_load').hide();
                     if (data.status == 422) {
                         $.each(data.responseJSON.errors, function (key, value) {
                             bootstrap.showToast({
@@ -179,6 +182,7 @@ $(document).ready(function () {
         })
 
         $('.button-action-toast').on('click', function () {
+            $('.ajax_load').show();
             $('body').css('pointer-events', 'all');
             var typeButton = $(this).attr("id");
             if (typeButton == 'button-no') return;
@@ -190,6 +194,7 @@ $(document).ready(function () {
                 },
                 url: `/medico/${id}/excluir`,
                 success: function (data) {
+                    $('.ajax_load').hide();
                     bootstrap.showToast({
                         body: "Médico excluído com sucesso",
                         toastClass: "text-success-emphasis bg-success-subtle",
@@ -198,6 +203,7 @@ $(document).ready(function () {
                     reloadDataTable('#table-datatable-medico');
                 },
                 error: function (data) {
+                    $('.ajax_load').hide();
                     bootstrap.showToast({
                         body: "Ocorreu um erro inesperado, tente novamente mais tarde",
                         toastClass: "text-danger-emphasis bg-danger-subtle",
@@ -234,7 +240,7 @@ $(document).ready(function () {
                     title: `MEDICO-${data.id}-ESPECIALIDADES`,
                     filename: `MEDICO-${data.id}-ESPECIALIDADES`,
                     exportOptions: {
-                        columns: [1, 2]
+                        columns: [0, 1, 2]
                     }
                 },
                 {
@@ -246,7 +252,7 @@ $(document).ready(function () {
                     filename: `MEDICO-${data.id}-ESPECIALIDADES`,
                     action: newexportaction,
                     exportOptions: {
-                        columns: [1, 2]
+                        columns: [0, 1, 2]
                     }
                 }],
             aaSorting: [[0, 'desc']],
@@ -307,8 +313,8 @@ $(document).ready(function () {
         <div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="list-specialty-title">Especialidade</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h1 class="list-specialty-title">Médico: Especialidades</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="font-size: 32px;"></button>
                 </div>
                 <div class="modal-body">
                     <div class="container-update-specialty">
@@ -316,6 +322,7 @@ $(document).ready(function () {
                             <span class="icon-add-specialty button-custom" id="button-action-add-specialty"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg></span>
                         </div>
                         <div id="container-choice-specialty-datatable" style="display: none">
+                            <label for="select-add-choice-specialty" class="label-input">Especialidades</label>
                             <select id="select-add-choice-specialty" multiple style="display: none"></select>
                             <div class="container-buttons-action">
                                 <button type="button" class="button-custom" id="button-cancel-add-specialty">CANCELAR</button>
@@ -326,10 +333,10 @@ $(document).ready(function () {
                     <table class="highlight" id="table-datatable-especialidade" style="width:100%;">
                         <thead>
                             <tr>
-                                <th>CÓDIGO</th>
+                                <th data-priority="1">CÓDIGO</th>
                                 <th>NOME</th>
                                 <th>DESCRIÇÃO</th>
-                                <th>AÇÃO</th>
+                                <th data-priority="2">AÇÃO</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -339,9 +346,6 @@ $(document).ready(function () {
                     </div>
                 </div>
             </div>
-            
-            
-            
             `;
     }
 
@@ -358,6 +362,7 @@ $(document).ready(function () {
         })
 
         $('.button-action-toast').on('click', function () {
+            $('.ajax_load').show();
             $('body').css('pointer-events', 'all');
             var typeButton = $(this).attr("id");
             if (typeButton == 'button-no') return;
@@ -369,6 +374,7 @@ $(document).ready(function () {
                 },
                 url: `/medico/${medicoId}/${especialidadeId}/desvincularEspecialidades`,
                 success: function (data) {
+                    $('.ajax_load').hide();
                     bootstrap.showToast({
                         body: "Especialidade desvinculada com sucesso",
                         toastClass: "text-success-emphasis bg-success-subtle",
@@ -382,6 +388,7 @@ $(document).ready(function () {
                     listSpecialtySelectAdd(medicoId)
                 },
                 error: function (data) {
+                    $('.ajax_load').hide();
                     bootstrap.showToast({
                         body: "Ocorreu um erro inesperado, tente novamente mais tarde",
                         toastClass: "text-danger-emphasis bg-danger-subtle",
@@ -423,6 +430,7 @@ $(document).ready(function () {
             })
         }
         if (validation) {
+            $('.ajax_load').show();
             $.ajax({
                 type: 'POST',
                 headers: {
@@ -435,6 +443,7 @@ $(document).ready(function () {
                 }),
                 dataType: 'json',
                 success: function (data) {
+                    $('.ajax_load').hide();
                     bootstrap.showToast({
                         body: "Especialidade(s) vinculadas com sucesso",
                         toastClass: "text-success-emphasis bg-success-subtle",
@@ -448,6 +457,7 @@ $(document).ready(function () {
                     listSpecialtySelectAdd(medicoId)
                 },
                 error: function (data) {
+                    $('.ajax_load').hide();
                     bootstrap.showToast({
                         body: "Ocorreu um erro inesperado, tente novamente mais tarde",
                         toastClass: "text-danger-emphasis bg-danger-subtle",
@@ -558,6 +568,7 @@ $(document).ready(function () {
             }
         }
         if (validation) {
+            $('.ajax_load').show();
             $.ajax({
                 type: 'POST',
                 headers: {
@@ -574,6 +585,7 @@ $(document).ready(function () {
                 }),
                 dataType: 'json',
                 success: function (data) {
+                    $('.ajax_load').hide();
                     bootstrap.showToast({
                         body: "Médico cadastrado com sucesso",
                         toastClass: "text-success-emphasis bg-success-subtle",
@@ -583,6 +595,7 @@ $(document).ready(function () {
                     limparFormRegister();
                 },
                 error: function (data) {
+                    $('.ajax_load').hide();
                     if (data.status == 422) {
                         $.each(data.responseJSON.errors, function (key, value) {
                             bootstrap.showToast({

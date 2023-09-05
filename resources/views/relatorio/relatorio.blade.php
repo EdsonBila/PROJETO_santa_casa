@@ -5,6 +5,7 @@
 
 @section('content')
 @include('includes.menu')
+@include('includes.load')
 <div class="container-All">
     <div class="container-header">
         <h1 class="title">Relatório</h1>

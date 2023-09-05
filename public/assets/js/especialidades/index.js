@@ -15,7 +15,7 @@ $(document).ready(function () {
                 title: 'ESPECIALIDADES',
                 filename: 'ESPECIALIDADES',
                 exportOptions: {
-                    columns: [1, 2]
+                    columns: [0, 1, 2]
                 }
             },
             {
@@ -27,7 +27,7 @@ $(document).ready(function () {
                 filename: 'ESPECIALIDADES',
                 action: newexportaction,
                 exportOptions: {
-                    columns: [1, 2]
+                    columns: [0, 1, 2]
                 }
             }],
         fixedHeader: true,
@@ -216,7 +216,7 @@ $(document).ready(function () {
                     title: `ESPECIALIDADES-${data.id}-MEDICO`,
                     filename: `ESPECIALIDADES-${data.id}-MEDICO`,
                     exportOptions: {
-                        columns: [1, 2]
+                        columns: [0, 1, 2, 3, 4]
                     }
                 },
                 {
@@ -228,7 +228,7 @@ $(document).ready(function () {
                     filename: `ESPECIALIDADES-${data.id}-MEDICO`,
                     action: newexportaction,
                     exportOptions: {
-                        columns: [1, 2]
+                        columns: [0, 1, 2, 3, 4]
                     }
                 }],
             aaSorting: [[0, 'desc']],
@@ -281,7 +281,7 @@ $(document).ready(function () {
                 { data: 'acao', name: 'acao', orderable: false, searchable: false },
             ],
         });
-         $('#ModalDetalhes').modal('show');
+        $('#ModalDetalhes').modal('show');
         listDoctorsSelectAdd(data.id);
     });
 
@@ -290,8 +290,8 @@ $(document).ready(function () {
             <div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
                 <div class="modal-content">
                     <div class="modal-header">
-                         <h1 class="list-doctor-title">Médicos</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                         <h1 class="list-doctor-title">Especialidade: Médicos</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="font-size: 32px;"></button>
                     </div>
                     <div class="modal-body">
                     <div class="container-update-doctor">
@@ -299,6 +299,7 @@ $(document).ready(function () {
                             <span class="icon-add-doctor button-custom" id="button-action-add-doctor"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg></span>
                         </div>
                         <div id="container-choice-doctor-database" style="display: none">
+                            <label for="select-add-choice-specialty" class="label-input">Médicos</label>
                             <select id="select-add-choice-doctor" multiple style="display: none"></select>
                             <div class="container-buttons-action">
                                 <button type="button" class="button-custom" id="button-cancel-add-doctor">CANCELAR</button>
@@ -309,12 +310,12 @@ $(document).ready(function () {
                     <table class="highlight" id="table-datatable-medico" style="width:100%;">
                         <thead>
                             <tr>
-                                <th data-priority="1">ID</th>
+                                <th data-priority="1">CÓDIGO</th>
                                 <th>NOME</th>
                                 <th>CRM</th>
                                 <th>TELEFONE</th>
                                 <th>E-MAIL</th>
-                                <th  data-priority="2">AÇÃO</th>
+                                <th data-priority="2">AÇÃO</th>
                             </tr>
                         </thead>
                         <tbody>

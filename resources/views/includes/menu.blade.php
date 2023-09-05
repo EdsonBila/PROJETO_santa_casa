@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg" style="background-color: #ebf6f9;">
     <div class="container-fluid">
-        <a class="navbar-brand navbar-text" href="{{ route('home.index') }}"><img class="logo-menu" src="{{ asset('assets/images/logo.jpg') }}" alt="Logo escrito santa casa"></a>
+        <a class="navbar-brand navbar-text" href="{{ route('home.index') }}"><img class="logo-menu" src="{{ asset('assets/images/logo.png') }}" alt="Logo escrito santa casa"></a>
         <button class="navbar-toggler" style="border: none;" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>

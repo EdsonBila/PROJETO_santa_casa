@@ -5,6 +5,7 @@
 
 @section('content')
 @include('includes.menu')
+@include('includes.load')
 <div class="container-All">
     <div class="container-header">
         <h1 class="title">Especialidades</h1>
@@ -22,7 +23,7 @@
         </div>
         <div class="form-check container-check">
             <input type="checkbox" class="form-check-input" id="form-register-choice-doctor-check">
-            <label class="form-check-label" for="form-register-choice-doctor-check">Selecionar Médicos?</label>
+            <label class="form-check-label" for="form-register-choice-doctor-check">Víncular Médicos?</label>
         </div>
         <div class="container-choice-doctor" style="display: none;">
             <select id="form-register-choice-doctor" multiple style="display: none"></select>

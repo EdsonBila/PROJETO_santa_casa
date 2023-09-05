@@ -15,7 +15,7 @@ $(document).ready(function () {
                 title: 'MEDICOS',
                 filename: 'MEDICOS',
                 exportOptions: {
-                    columns: [1, 2, 3, 4, 5]
+                    columns: [0, 1, 2, 3, 4, 5]
                 }
             },
             {
@@ -27,7 +27,7 @@ $(document).ready(function () {
                 filename: 'MEDICOS',
                 action: newexportaction,
                 exportOptions: {
-                    columns: [1, 2, 3, 4, 5]
+                    columns: [0, 1, 2, 3, 4, 5]
                 }
             }],
         fixedHeader: true,
@@ -108,7 +108,7 @@ $(document).ready(function () {
                     title: `MEDICO-${data.id}-ESPECIALIDADES`,
                     filename: `MEDICO-${data.id}-ESPECIALIDADES`,
                     exportOptions: {
-                        columns: [1, 2]
+                        columns: [0, 1, 2]
                     }
                 },
                 {
@@ -120,7 +120,7 @@ $(document).ready(function () {
                     filename: `MEDICO-${data.id}-ESPECIALIDADES`,
                     action: newexportaction,
                     exportOptions: {
-                        columns: [1, 2]
+                        columns: [0, 1, 2]
                     }
                 }],
             aaSorting: [[0, 'desc']],
@@ -183,11 +183,10 @@ $(document).ready(function () {
             <div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="list-specialty-title">Especialidade</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h1 class="list-specialty-title">Médico: Especialidades</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="font-size: 32px;"></button>
                     </div>
                     <div class="modal-body">
-
                         <div class="container-filtro-specialty">
                             <div class="container-list-specialty-header">
                                 <div class="container-list-specialty-buttons-header">
