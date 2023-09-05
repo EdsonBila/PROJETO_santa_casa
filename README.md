@@ -6,7 +6,7 @@
 
 ## Proposta
 
-Este é um projeto solicitado pela **Santa Casa de Misericórdia de Presidente Prudente** com o objetivo de avaliar meus conhecimentos para uma vaga de programador. 
+Este é um projeto solicitado pela **Santa Casa de Misericórdia de Presidente Prudente** visando avaliar meus conhecimentos para uma vaga de programador. 
 
 ### Projeto Requisitado
 Aqui estão os detalhes do projeto:
@@ -18,7 +18,7 @@ Aqui está a modelagem do banco de dados:
 
 ![Modelagem do Banco de Dados](https://github.com/EdsonBila/images/blob/main/projetoSantaCasa/modelagemTarefa.png)
 
-# ALGUNS COMANDO PARA SE COMEÇAR BEM
+# ALGUNS COMANDOS PARA SE COMEÇAR BEM
 Terminal sempre na pasta raiz 
 ### Rodar o projeto - CRIANDO A BASE DE DADOS
  - php artisan migrate
@@ -27,7 +27,7 @@ Terminal sempre na pasta raiz
  - npm run dev
  - php artisan serve
 
-### Popular o banco com algumas informaçoes fakes
+### Popular o banco com algumas informações fakes
  - php artisan tinker
     - Especialidade::factory(20)->create()
     - Medico::factory(20)->create() 
