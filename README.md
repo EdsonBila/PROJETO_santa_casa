@@ -6,7 +6,7 @@
 
 ## Proposta
 
-Este é um projeto solicitado pela **Santa Casa de Misericórdia de Presidente Prudente** com o objetivo de avaliar meus conhecimentos para uma vaga de programador. Estou empolgado em mostrar o que posso fazer!
+Este é um projeto solicitado pela **Santa Casa de Misericórdia de Presidente Prudente** com o objetivo de avaliar meus conhecimentos para uma vaga de programador. 
 
 ### Projeto Requisitado
 Aqui estão os detalhes do projeto:
