@@ -21,6 +21,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.4.0/css/responsive.dataTables.min.css" crossorigin="anonymous">
   <script src="https://libs.infoss.com.br/jquery/jquery.mask.min.js"></script>
+
+  <!-- charts - graficos -->
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+  <script src="https://code.highcharts.com/modules/export-data.js"></script>
+  <script src="https://code.highcharts.com/modules/accessibility.js"></script>
   @yield('linkcss')
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Santa Casa de Misericórdia de Presidente Prudente</title>

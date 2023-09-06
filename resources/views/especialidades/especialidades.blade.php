@@ -44,7 +44,6 @@
         </thead>
         <tbody></tbody>
     </table>
-
     <div class="modal fade" id="ModalEditar" tabindex="-1" aria-labelledby="ModalEditar" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -77,5 +76,6 @@
 <script src="{{ asset('assets/js/global/index.js') }}"></script>
 <script src="{{ asset('assets/js/global/multi.js') }}"></script>
 <script src="{{ asset('assets/js/datatable/index.js') }}"></script>
+<script src="{{ asset('assets/js/especialidades/graficos.js') }}"></script>
 <script src="{{ asset('assets/js/especialidades/index.js') }}"></script>
 @endsection
