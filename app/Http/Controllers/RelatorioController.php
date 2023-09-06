@@ -24,6 +24,9 @@ class RelatorioController extends Controller
                 $data = $query->get();
                 return DataTables::of($data)->addColumn('acao', function ($data) {
                     return "<div class='container-buttons-datatable'><button type='button' class='button-custom button-action' id='button-open-vinculo'>VÍNCULOS</button></div>";
+                })->editColumn('dt_cadastro', function ($data) {
+                    $dtCadastro = \Carbon\Carbon::parse($data->dt_cadastro);
+                    return $dtCadastro->format('d/m/Y - H:i');
                 })->rawColumns(['acao'])->make(true);
             } catch (ModelNotFoundException $e) {
                 Log::error('Erro ao obter medicos (Registro não encontrado): ' . $e->getMessage(), [
