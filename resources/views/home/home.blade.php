@@ -27,10 +27,12 @@
                 </div>
             </div>
         </div>
+        <div id="medicosPorEspecialidade-container" style="width: 100%;height: 100%;overflow: hidden;margin-top: 17px;border: solid 1px #1192c45e;border-radius: 14px;"></div>
     </div>
 </div>
 @endsection
 
 @section('scripts')
+<script src="{{ asset('assets/js/home/graficos.js') }}"></script>
 <script src="{{ asset('assets/js/home/index.js') }}"></script>
 @endsection

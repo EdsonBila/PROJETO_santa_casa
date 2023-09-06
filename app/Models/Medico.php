@@ -10,6 +10,7 @@ class Medico extends Model
     use HasFactory;
     protected $table = 'medicos';
     protected $fillable = ['nome', 'CRM', 'telefone', 'email'];
+    protected $dates = ['dt_cadastro'];
     public $timestamps = false;
 
     public function especialidades()

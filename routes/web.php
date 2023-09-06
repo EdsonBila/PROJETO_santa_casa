@@ -7,6 +7,8 @@ use App\Http\Controllers\MedicoController;
 use App\Http\Controllers\RelatorioController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home.index');
+Route::get('/home/grafico/medicosPorEspecialidade', [HomeController::class, 'doctorsBySpecialtyChart']);
+
 Route::get('/relatorio', [RelatorioController::class, 'index'])->name('relatorio.index');
 Route::get('/relatorio/{medicoId}/listaEspecialidadesSelecionadas', [RelatorioController::class, 'listSpecialtySelected']);
 
@@ -21,6 +23,9 @@ Route::get('/especialidade/{especialidadeId}/listaMedicosNaoSelecionados', [Espe
 Route::delete('/especialidade/{medicoId}/{especialidadeId}/desvincularMedico', [EspecialidadeController::class, 'unbindDoctor']);
 Route::post('/especialidade/{especialidadeId}/vincularMedico', [EspecialidadeController::class, 'linkDoctors']);
 Route::get('/especialidade/lista', [EspecialidadeController::class, 'list']);
+
+
+
 
 Route::get('/medico', [MedicoController::class, 'index'])->name('medico.index');
 Route::get('/medico/{medicoId}/visualizar', [MedicoController::class, 'view']);
